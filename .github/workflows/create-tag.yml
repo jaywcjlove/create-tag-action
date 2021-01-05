@@ -15,3 +15,35 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
           package-path: ./package.json
+
+      - name: The version number of the tag created.
+        run: echo "${{ steps.create_tag.outputs.version }}"
+
+      - name: The previous tag version number.
+        run: echo "${{ steps.create_tag.outputs.preversion }}"
+
+      - name: The tag was successfully created.
+        run: echo "${{ steps.create_tag.outputs.successful }}"
+
+      - name: Generate Changelog
+        id: changelog
+        uses: jaywcjlove/changelog-generator@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
+          filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        if: steps.create_tag.outputs.successful
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            ${{ steps.changelog.outputs.compareurl }}
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
