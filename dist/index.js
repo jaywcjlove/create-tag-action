@@ -8804,6 +8804,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const path = __importStar(__webpack_require__(5622));
+const fs = __importStar(__webpack_require__(5747));
 const semver = __importStar(__webpack_require__(1383));
 const core = __importStar(__webpack_require__(2186));
 const github = __importStar(__webpack_require__(5438));
@@ -8834,6 +8835,7 @@ function run() {
             /** current version, example: `v1.0.1` */
             let version = '';
             core.info(`Commit Content: ${commit}`);
+            core.info(`listTags.data >>>: ${JSON.stringify(listTags.data)}`);
             if ((test && !new RegExp(test).test(commit)) || (!test && !packagePath)) {
                 return;
             }
@@ -8847,10 +8849,32 @@ function run() {
                 }
             }
             else {
-                const resolvePackagePath = path.resolve(__dirname, packagePath);
+                const resolvePackagePath = path.resolve(__dirname, '..', packagePath);
+                if (/^package.json$/.test(path.basename(resolvePackagePath))) {
+                    core.setFailed(`Must specify package.json file!`);
+                    return;
+                }
+                if (!fs.existsSync(resolvePackagePath)) {
+                    core.setFailed(`File ${resolvePackagePath} does not exist!`);
+                    return;
+                }
+                const pkg = require(resolvePackagePath);
+                if (!version) {
+                    core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
+                    return;
+                }
+                version = `v${pkg.version}`;
+                if (listTags.data[0] &&
+                    !semver.gt(pkg.version, listTags.data[0])) {
+                    return;
+                }
                 console.log('Resolve Package Path1 >>>', resolvePackagePath);
+                console.log('pkg.version >>>', pkg.version);
+                console.log('listTags.data[0] >>>', listTags.data[0]);
             }
             core.info(`Tag: ${version}`);
+            if (!version)
+                return;
             const tag_rsp = yield octokit.git.createTag(Object.assign(Object.assign({}, github.context.repo), { tag: version, message: core.getInput('message'), object: github.context.sha, type: 'commit' }));
             if (tag_rsp.status !== 201) {
                 core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`);
@@ -8861,7 +8885,7 @@ function run() {
                 core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`);
                 return;
             }
-            core.info(`Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m`);
+            core.info(`Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m!`);
         }
         catch (error) {
             core.setFailed(error.message);
