@@ -1,4 +1,4 @@
-require('./sourcemap-register.js');module.exports =
+module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -49,8 +49,14 @@ function run() {
                 repo: repo,
                 ref: github.context.ref
             });
-            console.log('commit>', JSON.stringify(commit));
-            console.log('github.context.repo>', JSON.stringify(github.context.repo));
+            const listTags = yield octokit.repos.listTags({
+                owner: owner,
+                repo: repo
+            });
+            const commitStr = commit.data.commit.message;
+            console.log('commit>', commitStr);
+            console.log('github.context.repo>', JSON.stringify(github.context));
+            console.log('listTags>', JSON.stringify(listTags));
         }
         catch (error) {
             core.setFailed(error.message);
@@ -5987,4 +5993,3 @@ module.exports = require("zlib");;
 /******/ 	return __webpack_require__(109);
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
