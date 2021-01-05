@@ -8833,10 +8833,10 @@ function run() {
             }
             /** current version, example: `v1.0.1` */
             let version = '';
+            core.info(`Test Feild: ${test}`);
             if ((test && !new RegExp(test).test(commit)) || (!test && !packagePath)) {
                 return;
             }
-            core.info(`Test Feild: ${test}`);
             if (test && new RegExp(test).test(commit)) {
                 version = getVersion(commit);
                 if (!version)
