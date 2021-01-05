@@ -1,5 +1,5 @@
-name: 'Create Tags from commit'
-description: 'Auto create tags from commit.'
+name: 'Create Tags From'
+description: 'Auto create tags from commit or package.json.'
 author: 'Kenny Wong'
 inputs:
   token:
