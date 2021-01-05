@@ -30,6 +30,7 @@ async function run(): Promise<void> {
     /** current version, example: `v1.0.1` */
     let version = ''
     core.info(`Test Feild: ${test}`)
+    core.info(`Commit Content: ${commit}`)
 
     if ((test && !new RegExp(test).test(commit)) || (!test && !packagePath)) {
       return
