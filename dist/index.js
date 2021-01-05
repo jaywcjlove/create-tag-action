@@ -8847,7 +8847,7 @@ function run() {
             }
             else {
                 const resolvePackagePath = path.resolve(__dirname, packagePath);
-                console.log('Resolve Package Path >>>', resolvePackagePath);
+                console.log('Resolve Package Path1 >>>', resolvePackagePath);
             }
             core.info(`Tag: ${version}`);
             console.log('commit >>>', commit);
