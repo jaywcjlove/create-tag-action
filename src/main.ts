@@ -11,8 +11,14 @@ async function run(): Promise<void> {
       repo: (repo as unknown) as string,
       ref: github.context.ref
     })
-    console.log('commit>', JSON.stringify(commit))
-    console.log('github.context.repo>', JSON.stringify(github.context.repo))
+    const listTags = await octokit.repos.listTags({
+      owner: (owner as unknown) as string,
+      repo: (repo as unknown) as string
+    })
+    const commitStr = commit.data.commit.message
+    console.log('commit>', commitStr)
+    console.log('github.context.repo>', JSON.stringify(github.context))
+    console.log('listTags>', JSON.stringify(listTags))
   } catch (error) {
     core.setFailed(error.message)
   }
