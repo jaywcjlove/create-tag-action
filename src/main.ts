@@ -104,7 +104,9 @@ async function run(): Promise<void> {
       core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
       return
     }
-
+    core.setOutput('version', version)
+    core.setOutput('preversion', preTag)
+    core.setOutput('successful', true)
     core.info(
       `Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m!`
     )

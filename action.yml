@@ -16,6 +16,14 @@ inputs:
     description: 'The path of the package.json file.'
     default: ''
     required: false
+
+outputs:
+  version:
+    description: 'The version number of the tag created.'
+  preversion:
+    description: 'The previous tag version number.'
+  successful:
+    description: 'The tag was successfully created.'
 runs:
   using: 'node12'
   main: 'dist/index.js'
