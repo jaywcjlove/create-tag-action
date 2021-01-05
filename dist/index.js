@@ -8856,8 +8856,12 @@ function run() {
                 core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`);
                 return;
             }
-            core.info(`Tag: ${version}`);
-            console.log('List Tags >>>', listTags.data);
+            const ref_rsp = yield octokit.git.createRef(Object.assign(Object.assign({}, github.context.repo), { ref: `refs/tags/${version}`, sha: tag_rsp.data.sha }));
+            if (ref_rsp.status !== 201) {
+                core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`);
+                return;
+            }
+            core.info(`Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m`);
         }
         catch (error) {
             core.setFailed(error.message);
