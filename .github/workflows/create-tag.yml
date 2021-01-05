@@ -1,0 +1,14 @@
+on: [push]
+
+jobs: 
+  tags: 
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create Tag
+        id: create_tag
+        uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

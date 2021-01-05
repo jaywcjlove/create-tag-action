@@ -1,6 +1,9 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+create-tag-action
+----
+
+[![build-test](https://github.com/jaywcjlove/create-tag-action/workflows/build-test/badge.svg)](https://github.com/actions/typescript-action/actions)
+
+Auto create tags from commit.
 
 # Create a JavaScript Action using TypeScript
 
