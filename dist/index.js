@@ -8869,6 +8869,7 @@ function run() {
                 if (listTags.data[0] &&
                     listTags.data[0].name &&
                     !semver.gt(pkg.version, listTags.data[0].name)) {
+                    core.info(`The new tag \x1b[32m${pkg.version}\x1b[0m is smaller than \x1b[32m${listTags.data[0].name}\x1b[0m. Do not create label.`);
                     return;
                 }
                 console.log('Resolve Package Path1 >>>', resolvePackagePath);
