@@ -29,10 +29,7 @@ async function run(): Promise<void> {
     }
     /** current version, example: `v1.0.1` */
     let version = ''
-    core.info(`Test Feild: ${test}`)
     core.info(`Commit Content: ${commit}`)
-    core.info(`Test1: ${new RegExp(test).test(commit)}`)
-    core.info(`Test2: ${!new RegExp(test).test(commit)}`)
 
     if ((test && !new RegExp(test).test(commit)) || (!test && !packagePath)) {
       return
@@ -51,9 +48,19 @@ async function run(): Promise<void> {
       console.log('Resolve Package Path1 >>>', resolvePackagePath)
     }
     core.info(`Tag: ${version}`)
-    console.log('commit >>>', commit)
+    const tag_rsp = await octokit.git.createTag({
+      ...github.context.repo,
+      tag: version,
+      message: core.getInput('message'),
+      object: github.context.sha,
+      type: 'commit'
+    })
+    if (tag_rsp.status !== 201) {
+      core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
+      return
+    }
+    core.info(`Tag: ${version}`)
     console.log('List Tags >>>', listTags.data)
-    console.log('version>', listTags.data)
   } catch (error) {
     core.setFailed(error.message)
   }
