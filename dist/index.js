@@ -8860,7 +8860,7 @@ function run() {
                     return;
                 }
                 const pkg = require(resolvePackagePath);
-                if (!version) {
+                if (!pkg.version) {
                     core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
                     return;
                 }
