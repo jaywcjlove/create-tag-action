@@ -8829,23 +8829,23 @@ function run() {
                 owner: owner,
                 repo: repo
             });
+            const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
             if (!test && !packagePath) {
+                core.setFailed('Please setting\x1b[33m test\x1b[0m or \x1b[33m package-path\x1b[0m!');
                 return;
             }
             /** current version, example: `v1.0.1` */
             let version = '';
             core.info(`Commit Content: ${commit}`);
-            core.info(`listTags.data >>>: ${JSON.stringify(listTags.data)}`);
-            if ((test && !new RegExp(test).test(commit)) || (!test && !packagePath)) {
+            if (test && !new RegExp(test).test(commit)) {
+                core.info(`\x1b[33mThis is not a tagged push.\x1b[0m`);
                 return;
             }
             if (test && new RegExp(test).test(commit)) {
                 version = getVersion(commit);
                 if (!version)
                     return;
-                if (listTags.data[0] &&
-                    listTags.data[0].name &&
-                    !semver.gt(version, listTags.data[0].name)) {
+                if (preTag && !semver.gt(version, preTag)) {
                     return;
                 }
             }
@@ -8864,19 +8864,18 @@ function run() {
                     core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
                     return;
                 }
-                console.log('Resolve Package Path2 >>>', JSON.stringify(pkg));
                 version = `v${pkg.version}`;
-                if (listTags.data[0] &&
-                    listTags.data[0].name &&
-                    !semver.gt(pkg.version, listTags.data[0].name)) {
-                    core.info(`The new tag \x1b[32m${pkg.version}\x1b[0m is smaller than \x1b[32m${listTags.data[0].name}\x1b[0m. Do not create label.`);
+                if (preTag && !semver.gt(pkg.version, preTag)) {
+                    core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${listTags.data[0].name}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
                     return;
                 }
                 console.log('Resolve Package Path1 >>>', resolvePackagePath);
                 console.log('pkg.version >>>', pkg.version);
-                console.log('listTags.data >>>', listTags.data[0]);
+                console.log('listTags.data >>>', preTag);
             }
-            core.info(`Tag: ${version}`);
+            if (preTag) {
+                core.info(`Create tag \x1b[33m${preTag}\x1b[0m => \x1b[32m${version}\x1b[0m`);
+            }
             if (!version)
                 return;
             const tag_rsp = yield octokit.git.createTag(Object.assign(Object.assign({}, github.context.repo), { tag: version, message: core.getInput('message'), object: github.context.sha, type: 'commit' }));
