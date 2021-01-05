@@ -6,6 +6,11 @@ inputs:
     description: 'Your GITHUB_TOKEN'
     default: ''
     required: true
+
+  package-path:
+    description: 'The path of the package.json file.'
+    default: ''
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
