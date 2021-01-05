@@ -8860,14 +8860,15 @@ function run() {
                     return;
                 }
                 const pkg = require(resolvePackagePath);
-                console.log('Resolve Package Path1 >>>', JSON.stringify(pkg));
                 if (!pkg.version) {
                     core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
                     return;
                 }
+                console.log('Resolve Package Path2 >>>', JSON.stringify(pkg));
                 version = `v${pkg.version}`;
                 if (listTags.data[0] &&
-                    !semver.gt(pkg.version, listTags.data[0])) {
+                    listTags.data[0].name &&
+                    !semver.gt(pkg.version, listTags.data[0].name)) {
                     return;
                 }
                 console.log('Resolve Package Path1 >>>', resolvePackagePath);
