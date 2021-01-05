@@ -13,4 +13,5 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+          # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+          package-path: ./package.json
