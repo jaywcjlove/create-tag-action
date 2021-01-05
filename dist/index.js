@@ -8844,13 +8844,14 @@ function run() {
                 if (!version)
                     return;
                 if (listTags.data[0] &&
-                    !semver.gt(version, listTags.data[0])) {
+                    listTags.data[0].name &&
+                    !semver.gt(version, listTags.data[0].name)) {
                     return;
                 }
             }
             else {
                 const resolvePackagePath = path.resolve(__dirname, '..', packagePath);
-                if (/^package.json$/.test(path.basename(resolvePackagePath))) {
+                if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
                     core.setFailed(`Must specify package.json file!`);
                     return;
                 }
@@ -8870,7 +8871,7 @@ function run() {
                 }
                 console.log('Resolve Package Path1 >>>', resolvePackagePath);
                 console.log('pkg.version >>>', pkg.version);
-                console.log('listTags.data[0] >>>', listTags.data[0]);
+                console.log('listTags.data >>>', listTags.data[0]);
             }
             core.info(`Tag: ${version}`);
             if (!version)
