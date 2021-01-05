@@ -35,10 +35,10 @@ async function run(): Promise<void> {
     }
     /** current version, example: `v1.0.1` */
     let version = ''
-    core.info(`Commit Content: \x1b[33m${commit}\x1b[0m`)
+    core.info(`Commit Content: \x1b[34m${commit}\x1b[0m`)
 
     if (test && !new RegExp(test).test(commit)) {
-      core.info(`\x1b[34mThis is not a tagged push.\x1b[0m`)
+      core.info(`\x1b[33mThis is not a tagged push.\x1b[0m`)
       return
     }
 
