@@ -8868,11 +8868,8 @@ function run() {
                     return;
                 }
                 const pkg = require(resolvePackagePath);
-                core.info(`Package Path: \x1b[33m${resolvePackagePath}\x1b[0m , \x1b[32m${pkg.name}\x1b[0m.\x1b[33m\x1b[0m ${__dirname} - ${process.cwd()}`);
                 core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`);
                 core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`);
-                core.info(`__dirname Path: \x1b[33m${__dirname}\x1b[0m`);
-                core.info(`process.cwd() Path: \x1b[33m${process.cwd()}\x1b[0m`);
                 if (!pkg.version) {
                     core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
                     return;
