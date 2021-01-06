@@ -8846,10 +8846,11 @@ function run() {
                 if (!version)
                     return;
                 if (preTag && !semver.gt(version, preTag)) {
+                    core.info(`The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
                     return;
                 }
             }
-            else {
+            if (!test) {
                 const resolvePackagePath = path.resolve(__dirname, '..', packagePath);
                 if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
                     core.setFailed(`Must specify package.json file!`);
@@ -8869,15 +8870,16 @@ function run() {
                     core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${listTags.data[0].name}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
                     return;
                 }
-                console.log('Resolve Package Path1 >>>', resolvePackagePath);
-                console.log('pkg.version >>>', pkg.version);
-                console.log('listTags.data >>>', preTag);
-            }
-            if (preTag) {
-                core.info(`Create tag \x1b[33m${preTag}\x1b[0m => \x1b[32m${version}\x1b[0m`);
+                core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`);
             }
             if (!version)
                 return;
+            if (preTag) {
+                core.info(`Create tag \x1b[33m${preTag}\x1b[0m => \x1b[32m${version}\x1b[0m`);
+            }
+            else {
+                core.info(`Create tag \x1b[32m${version}\x1b[0m`);
+            }
             const tag_rsp = yield octokit.git.createTag(Object.assign(Object.assign({}, github.context.repo), { tag: version, message: core.getInput('message'), object: github.context.sha, type: 'commit' }));
             if (tag_rsp.status !== 201) {
                 core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`);
