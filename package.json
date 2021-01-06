@@ -1,9 +1,9 @@
 {
   "name": "create-tag-action",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
-  "description": "Auto create tags from commit.",
-  "main": "lib/main.js",
+  "description": "Auto create tags from commit or package.json.",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts",
