@@ -8853,7 +8853,7 @@ function run() {
                 if (!version)
                     return;
                 if (preTag && !semver.gt(version, preTag)) {
-                    core.info(`The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
+                    core.info(`The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
                     return;
                 }
             }
@@ -8876,7 +8876,7 @@ function run() {
                 }
                 version = `v${pkg.version}`;
                 if (preTag && !semver.gt(pkg.version, preTag)) {
-                    core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
+                    core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
                     return;
                 }
                 core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`);
