@@ -70,6 +70,7 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
   if: steps.create_tag.outputs.successful
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
+    head-ref: ${{steps.create_tag.outputs.version}}
     filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
     filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
 ```
