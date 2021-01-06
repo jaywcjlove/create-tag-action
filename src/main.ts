@@ -25,6 +25,15 @@ async function run(): Promise<void> {
       owner: (owner as unknown) as string,
       repo: (repo as unknown) as string
     })
+    if (listTags.status !== 200) {
+      core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
+      return
+    }
+    for (const tagData of listTags.data) {
+      core.info(
+        `List Tag: \x1b[33m ${tagData.name}.\x1b[0m ${tagData.commit.sha}`
+      )
+    }
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
     if (!test && !packagePath) {
