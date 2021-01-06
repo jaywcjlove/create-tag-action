@@ -8829,6 +8829,13 @@ function run() {
                 owner: owner,
                 repo: repo
             });
+            if (listTags.status !== 200) {
+                core.setFailed(`Failed to get tag lists (status=${listTags.status})`);
+                return;
+            }
+            for (const tagData of listTags.data) {
+                core.info(`List Tag: \x1b[33m ${tagData.name}.\x1b[0m ${tagData.commit.sha}`);
+            }
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
             if (!test && !packagePath) {
                 core.setFailed('Please setting\x1b[33m test\x1b[0m or \x1b[33m package-path\x1b[0m!');
