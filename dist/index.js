@@ -8858,7 +8858,7 @@ function run() {
                 }
             }
             if (!test) {
-                const resolvePackagePath = path.resolve(process.cwd(), '..', packagePath);
+                const resolvePackagePath = path.resolve(process.cwd(), packagePath);
                 if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
                     core.setFailed(`Must specify package.json file!`);
                     return;
