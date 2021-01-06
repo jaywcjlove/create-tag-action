@@ -8868,13 +8868,14 @@ function run() {
                     return;
                 }
                 const pkg = require(resolvePackagePath);
+                core.info(`Package Path: \x1b[33m${resolvePackagePath}\x1b[0m , \x1b[32m${pkg.name}\x1b[0m.\x1b[33m\x1b[0m ${__dirname} - ${process.cwd()}`);
                 if (!pkg.version) {
                     core.setFailed(`The \x1b[31mversion\x1b[0m feild in package.json does not exist!`);
                     return;
                 }
                 version = `v${pkg.version}`;
                 if (preTag && !semver.gt(pkg.version, preTag)) {
-                    core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${listTags.data[0].name}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
+                    core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create label.\x1b[0m`);
                     return;
                 }
                 core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`);
