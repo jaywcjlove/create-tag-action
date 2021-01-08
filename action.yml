@@ -24,7 +24,9 @@ inputs:
 
 outputs:
   version:
-    description: 'The version number of the tag created.'
+    description: 'The version number of the tag created. example: v1.0.0'
+  versionNumber:
+    description: 'The version number of the tag created. example: 1.0.0'
   preversion:
     description: 'The previous tag version number.'
   successful:

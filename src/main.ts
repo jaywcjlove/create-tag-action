@@ -42,6 +42,7 @@ async function run(): Promise<void> {
     if (inputVersion) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
+      core.setOutput('versionNumber', inputVersion.replace(/^v/, ''))
       core.setOutput('preversion', preTag)
       core.setOutput('successful', true)
       core.info(
@@ -123,6 +124,7 @@ async function run(): Promise<void> {
     const tagSha = await createTag(myToken, version)
 
     core.setOutput('version', version)
+    core.setOutput('versionNumber', version.replace(/^v/, ''))
     core.setOutput('preversion', preTag)
     core.setOutput('successful', true)
     core.info(

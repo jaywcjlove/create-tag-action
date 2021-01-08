@@ -11,6 +11,10 @@ Auto create tags from commit or package.json
 
 Your `GITHUB_TOKEN`. This is required. Why do we need `token`? Read more here: [About the GITHUB_TOKEN secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
 
+#### `version`
+
+Create tag for specified version. Exampe: `version: v1.0.0`
+
 #### `test`
 
 The regular expression matches the submitted content. Exampe: `test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'`
@@ -21,7 +25,8 @@ The path of the `package.json` file.
 
 ## Outputs
 
-- `version` The version number of the tag created.
+- `version` The version number of the tag created, example: `v1.0.0`.
+- `versionNumber` The version number of the tag created, example: `1.0.0`.
 - `preversion` The previous tag version number.
 - `successful` The tag was successfully created.
 
