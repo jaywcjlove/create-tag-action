@@ -8833,13 +8833,12 @@ function run() {
                 core.setFailed(`Failed to get tag lists (status=${listTags.status})`);
                 return;
             }
-            core.startGroup(`${owner}/${repo} List Tag`);
+            core.info(`Repos ${owner}/${repo} List Tag`);
             for (const tagData of listTags.data) {
                 core.startGroup(`Tag: ${tagData.name} ${tagData.commit.sha}`);
                 core.info(`${JSON.stringify(tagData, null, 2)}`);
                 core.endGroup();
             }
-            core.endGroup();
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
             if (!test && !packagePath) {
                 core.setFailed('Please setting\x1b[33m test\x1b[0m or \x1b[33m package-path\x1b[0m!');
