@@ -31,7 +31,9 @@ async function run(): Promise<void> {
     }
     core.startGroup(`${owner}/${repo} List Tag`)
     for (const tagData of listTags.data) {
-      core.info(`@\x1b[33m${tagData.name}\x1b[0m ${tagData.commit.sha}`)
+      core.startGroup(`Tag: ${tagData.name} ${tagData.commit.sha}`)
+      core.info(`${JSON.stringify(tagData, null, 2)}`)
+      core.endGroup()
     }
     core.endGroup()
     const preTag =
@@ -73,6 +75,13 @@ async function run(): Promise<void> {
       const pkg = require(resolvePackagePath)
       core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`)
       core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`)
+      core.startGroup(
+        `Package Data: \x1b[33m${pkg.name || '-'}@\x1b[0m \x1b[33m${
+          pkg.version || '-'
+        }\x1b[0m`
+      )
+      core.info(`${JSON.stringify(pkg, null, 2)}`)
+      core.endGroup()
       if (!pkg.version) {
         core.setFailed(
           `The \x1b[31mversion\x1b[0m feild in package.json does not exist!`
@@ -107,6 +116,11 @@ async function run(): Promise<void> {
       core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
       return
     }
+    core.startGroup(
+      `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+    )
+    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+    core.endGroup()
 
     const ref_rsp = await octokit.git.createRef({
       ...github.context.repo,
@@ -118,6 +132,12 @@ async function run(): Promise<void> {
       core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
       return
     }
+    core.startGroup(
+      `CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+    )
+    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+    core.endGroup()
+
     core.setOutput('version', version)
     core.setOutput('preversion', preTag)
     core.setOutput('successful', true)
