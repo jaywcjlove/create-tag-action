@@ -8822,6 +8822,7 @@ function run() {
             const myToken = core.getInput('token');
             const test = core.getInput('test');
             const packagePath = core.getInput('package-path');
+            const inputVersion = core.getInput('version');
             const octokit = github.getOctokit(myToken);
             const { owner, repo } = github.context.repo;
             const commit = github.context.payload.head_commit.message;
@@ -8840,8 +8841,16 @@ function run() {
                 core.endGroup();
             }
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
+            if (inputVersion) {
+                const tagSha = yield createTag(myToken, inputVersion);
+                core.setOutput('version', inputVersion);
+                core.setOutput('preversion', preTag);
+                core.setOutput('successful', true);
+                core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
+                return;
+            }
             if (!test && !packagePath) {
-                core.setFailed('Please setting\x1b[33m test\x1b[0m or \x1b[33m package-path\x1b[0m!');
+                core.setFailed('Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m!');
                 return;
             }
             /** current version, example: `v1.0.1` */
@@ -8860,7 +8869,7 @@ function run() {
                     return;
                 }
             }
-            if (!test) {
+            if (!test && packagePath) {
                 const resolvePackagePath = path.resolve(process.cwd(), packagePath);
                 if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
                     core.setFailed(`Must specify package.json file!`);
@@ -8895,30 +8904,37 @@ function run() {
             else {
                 core.info(`Create tag \x1b[32m${version}\x1b[0m`);
             }
-            const tag_rsp = yield octokit.git.createTag(Object.assign(Object.assign({}, github.context.repo), { tag: version, message: core.getInput('message'), object: github.context.sha, type: 'commit' }));
-            if (tag_rsp.status !== 201) {
-                core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`);
-                return;
-            }
-            core.startGroup(`CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `);
-            core.info(`${JSON.stringify(tag_rsp, null, 2)}`);
-            core.endGroup();
-            const ref_rsp = yield octokit.git.createRef(Object.assign(Object.assign({}, github.context.repo), { ref: `refs/tags/${version}`, sha: tag_rsp.data.sha }));
-            if (ref_rsp.status !== 201) {
-                core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`);
-                return;
-            }
-            core.startGroup(`CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `);
-            core.info(`${JSON.stringify(tag_rsp, null, 2)}`);
-            core.endGroup();
+            const tagSha = yield createTag(myToken, version);
             core.setOutput('version', version);
             core.setOutput('preversion', preTag);
             core.setOutput('successful', true);
-            core.info(`Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m!`);
+            core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
         }
         catch (error) {
             core.setFailed(error.message);
         }
+    });
+}
+function createTag(token, version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const octokit = github.getOctokit(token);
+        const tag_rsp = yield octokit.git.createTag(Object.assign(Object.assign({}, github.context.repo), { tag: version, message: core.getInput('message'), object: github.context.sha, type: 'commit' }));
+        if (tag_rsp.status !== 201) {
+            core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`);
+            return;
+        }
+        core.startGroup(`CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `);
+        core.info(`${JSON.stringify(tag_rsp, null, 2)}`);
+        core.endGroup();
+        const ref_rsp = yield octokit.git.createRef(Object.assign(Object.assign({}, github.context.repo), { ref: `refs/tags/${version}`, sha: tag_rsp.data.sha }));
+        if (ref_rsp.status !== 201) {
+            core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`);
+            return;
+        }
+        core.startGroup(`CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `);
+        core.info(`${JSON.stringify(tag_rsp, null, 2)}`);
+        core.endGroup();
+        return tag_rsp.data.sha;
     });
 }
 try {

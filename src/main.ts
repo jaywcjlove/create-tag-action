@@ -18,6 +18,7 @@ async function run(): Promise<void> {
     const myToken = core.getInput('token')
     const test = core.getInput('test')
     const packagePath = core.getInput('package-path')
+    const inputVersion = core.getInput('version')
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
@@ -37,9 +38,23 @@ async function run(): Promise<void> {
     }
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
+
+    if (inputVersion) {
+      const tagSha = await createTag(myToken, inputVersion)
+      core.setOutput('version', inputVersion)
+      core.setOutput('preversion', preTag)
+      core.setOutput('successful', true)
+      core.info(
+        `Tagged \x1b[32m${
+          tagSha || ' - '
+        }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+      )
+      return
+    }
+
     if (!test && !packagePath) {
       core.setFailed(
-        'Please setting\x1b[33m test\x1b[0m or \x1b[33m package-path\x1b[0m!'
+        'Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m!'
       )
       return
     }
@@ -61,7 +76,7 @@ async function run(): Promise<void> {
         return
       }
     }
-    if (!test) {
+    if (!test && packagePath) {
       const resolvePackagePath = path.resolve(process.cwd(), packagePath)
       if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
         core.setFailed(`Must specify package.json file!`)
@@ -104,48 +119,60 @@ async function run(): Promise<void> {
     } else {
       core.info(`Create tag \x1b[32m${version}\x1b[0m`)
     }
-    const tag_rsp = await octokit.git.createTag({
-      ...github.context.repo,
-      tag: version,
-      message: core.getInput('message'),
-      object: github.context.sha,
-      type: 'commit'
-    })
-    if (tag_rsp.status !== 201) {
-      core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
-      return
-    }
-    core.startGroup(
-      `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
-    )
-    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
-    core.endGroup()
 
-    const ref_rsp = await octokit.git.createRef({
-      ...github.context.repo,
-      ref: `refs/tags/${version}`,
-      sha: tag_rsp.data.sha
-    })
-
-    if (ref_rsp.status !== 201) {
-      core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
-      return
-    }
-    core.startGroup(
-      `CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
-    )
-    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
-    core.endGroup()
+    const tagSha = await createTag(myToken, version)
 
     core.setOutput('version', version)
     core.setOutput('preversion', preTag)
     core.setOutput('successful', true)
     core.info(
-      `Tagged \x1b[32m${tag_rsp.data.sha}\x1b[0m as \x1b[32m${version}\x1b[0m!`
+      `Tagged \x1b[32m${
+        tagSha || ' - '
+      }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
     )
   } catch (error) {
     core.setFailed(error.message)
   }
+}
+
+async function createTag(
+  token: string,
+  version: string
+): Promise<string | undefined> {
+  const octokit = github.getOctokit(token)
+  const tag_rsp = await octokit.git.createTag({
+    ...github.context.repo,
+    tag: version,
+    message: core.getInput('message'),
+    object: github.context.sha,
+    type: 'commit'
+  })
+  if (tag_rsp.status !== 201) {
+    core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
+    return
+  }
+  core.startGroup(
+    `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+  )
+  core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+  core.endGroup()
+
+  const ref_rsp = await octokit.git.createRef({
+    ...github.context.repo,
+    ref: `refs/tags/${version}`,
+    sha: tag_rsp.data.sha
+  })
+
+  if (ref_rsp.status !== 201) {
+    core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
+    return
+  }
+  core.startGroup(
+    `CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+  )
+  core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+  core.endGroup()
+  return tag_rsp.data.sha
 }
 
 try {

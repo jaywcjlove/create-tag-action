@@ -7,6 +7,11 @@ inputs:
     default: ''
     required: true
 
+  version:
+    description: 'Create tag for specified version'
+    default: ''
+    required: false
+
   test:
     description: 'The regular expression matches the submitted content.'
     default: ''
