@@ -75,7 +75,7 @@ async function run(): Promise<void> {
       core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`)
       core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`)
       core.startGroup(
-        `Package Data: \x1b[33m${pkg.name || '-'}@\x1b[0m \x1b[33m${
+        `Package Data: \x1b[33m${pkg.name || '-'}@\x1b[0m\x1b[33m${
           pkg.version || '-'
         }\x1b[0m`
       )
