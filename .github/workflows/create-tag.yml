@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Look Changelog
-        uses: jaywcjlove/changelog-generator@v1.3.3
+        uses: jaywcjlove/changelog-generator@v1.3.9
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           filter-author: (jaywcjlove|小弟调调™)
@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate Changelog
         id: changelog
-        uses: jaywcjlove/changelog-generator@v1.3.3
+        uses: jaywcjlove/changelog-generator@v1.3.9
         if: steps.create_tag.outputs.successful
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
