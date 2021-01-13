@@ -38,12 +38,12 @@ async function run(): Promise<void> {
     }
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
-
+    // Before successful
+    core.setOutput('preversion', (preTag || '').replace(/^v/, ''))
     if (inputVersion) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
       core.setOutput('versionNumber', inputVersion.replace(/^v/, ''))
-      core.setOutput('preversion', preTag)
       core.setOutput('successful', true)
       core.info(
         `Tagged \x1b[32m${
@@ -52,8 +52,6 @@ async function run(): Promise<void> {
       )
       return
     }
-    // Before successful
-    core.setOutput('preversion', preTag)
 
     if (!test && !packagePath) {
       core.setFailed(
@@ -127,7 +125,6 @@ async function run(): Promise<void> {
 
     core.setOutput('version', version)
     core.setOutput('versionNumber', version.replace(/^v/, ''))
-    core.setOutput('preversion', preTag)
     core.setOutput('successful', true)
     core.info(
       `Tagged \x1b[32m${

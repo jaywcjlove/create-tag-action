@@ -27,7 +27,7 @@ The path of the `package.json` file.
 
 - `version` The version number of the tag created, example: `v1.0.0`.
 - `versionNumber` The version number of the tag created, example: `1.0.0`.
-- `preversion` The previous tag version number.
+- `preversion` The previous tag version number, example: `1.0.0`.
 - `successful` The tag was successfully created.
 
 ## Example Usage

@@ -8841,17 +8841,16 @@ function run() {
                 core.endGroup();
             }
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
+            // Before successful
+            core.setOutput('preversion', (preTag || '').replace(/^v/, ''));
             if (inputVersion) {
                 const tagSha = yield createTag(myToken, inputVersion);
                 core.setOutput('version', inputVersion);
                 core.setOutput('versionNumber', inputVersion.replace(/^v/, ''));
-                core.setOutput('preversion', preTag);
                 core.setOutput('successful', true);
                 core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
                 return;
             }
-            // Before successful
-            core.setOutput('preversion', preTag);
             if (!test && !packagePath) {
                 core.setFailed('Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m!');
                 return;
@@ -8910,7 +8909,6 @@ function run() {
             const tagSha = yield createTag(myToken, version);
             core.setOutput('version', version);
             core.setOutput('versionNumber', version.replace(/^v/, ''));
-            core.setOutput('preversion', preTag);
             core.setOutput('successful', true);
             core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
         }
