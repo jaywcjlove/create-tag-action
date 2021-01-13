@@ -23,8 +23,11 @@ jobs:
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
           package-path: ./package.json
 
-      - name: The version number of the tag created.
+      - name: The version of the tag created.
         run: echo "${{ steps.create_tag.outputs.version }}"
+
+      - name: The version number of the tag created.
+        run: echo "${{ steps.create_tag.outputs.versionNumber }}"
 
       - name: The previous tag version number.
         run: echo "${{ steps.create_tag.outputs.preversion }}"
