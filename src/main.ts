@@ -52,6 +52,8 @@ async function run(): Promise<void> {
       )
       return
     }
+    // Before successful
+    core.setOutput('preversion', preTag)
 
     if (!test && !packagePath) {
       core.setFailed(
