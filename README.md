@@ -29,6 +29,9 @@ The path of the `package.json` file.
 - `versionNumber` The version number of the tag created, example: `1.0.0`.
 - `preversion` The previous tag version number, example: `1.0.0`.
 - `successful` The tag was successfully created.
+- `majorVersion` MAJOR version when you make incompatible API changes.
+- `minorVersion` MINOR version when you add functionality in a backwards compatible manner, and.
+- `patchVersion` PATCH version when you make backwards compatible bug fixes.
 
 ## Example Usage
 
