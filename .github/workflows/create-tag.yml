@@ -29,6 +29,15 @@ jobs:
       - name: The version number of the tag created.
         run: echo "${{ steps.create_tag.outputs.versionNumber }}"
 
+      - name: The MAJOR version number of the tag created.
+        run: echo "${{ steps.create_tag.outputs.majorVersion }}"
+
+      - name: The MINOR version number of the tag created.
+        run: echo "${{ steps.create_tag.outputs.minorVersion }}"
+
+      - name: The PATCH version number of the tag created.
+        run: echo "${{ steps.create_tag.outputs.patchVersion }}"
+
       - name: The previous tag version number.
         run: echo "${{ steps.create_tag.outputs.preversion }}"
 
