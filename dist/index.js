@@ -8842,12 +8842,18 @@ function run() {
             }
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
             // Before successful
-            core.setOutput('preversion', (preTag || '').replace(/^v/, ''));
+            core.setOutput('preversion', preTag.replace(/^v/, ''));
+            core.setOutput('majorVersion', preTag.replace(/^v/, '').split('.')[0] || '');
+            core.setOutput('minorVersion', preTag.replace(/^v/, '').split('.')[1] || '');
+            core.setOutput('patchVersion', preTag.replace(/^v/, '').split('.')[2] || '');
             if (inputVersion) {
                 const tagSha = yield createTag(myToken, inputVersion);
                 core.setOutput('version', inputVersion);
                 core.setOutput('versionNumber', inputVersion.replace(/^v/, ''));
                 core.setOutput('successful', true);
+                core.setOutput('majorVersion', inputVersion.replace(/^v/, '').split('.')[0] || '');
+                core.setOutput('minorVersion', inputVersion.replace(/^v/, '').split('.')[1] || '');
+                core.setOutput('patchVersion', inputVersion.replace(/^v/, '').split('.')[2] || '');
                 core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
                 return;
             }
@@ -8910,6 +8916,9 @@ function run() {
             core.setOutput('version', version);
             core.setOutput('versionNumber', version.replace(/^v/, ''));
             core.setOutput('successful', true);
+            core.setOutput('majorVersion', version.replace(/^v/, '').split('.')[0] || '');
+            core.setOutput('minorVersion', version.replace(/^v/, '').split('.')[1] || '');
+            core.setOutput('patchVersion', version.replace(/^v/, '').split('.')[2] || '');
             core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
         }
         catch (error) {

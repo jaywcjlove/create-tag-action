@@ -25,6 +25,12 @@ inputs:
 outputs:
   version:
     description: 'The version number of the tag created. example: v1.0.0'
+  majorVersion:
+    description: 'MAJOR version when you make incompatible API changes.'
+  minorVersion:
+    description: 'MINOR version when you add functionality in a backwards compatible manner, and.'
+  patchVersion:
+    description: 'PATCH version when you make backwards compatible bug fixes.'
   versionNumber:
     description: 'The version number of the tag created. example: 1.0.0'
   preversion:
