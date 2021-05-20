@@ -22,9 +22,9 @@ async function run(): Promise<void> {
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
-    const listTags = await octokit.repos.listTags({
-      owner: (owner as unknown) as string,
-      repo: (repo as unknown) as string
+    const listTags = await octokit.rest.repos.listTags({
+      owner: owner as unknown as string,
+      repo: repo as unknown as string
     })
     if (listTags.status !== 200) {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
@@ -49,9 +49,18 @@ async function run(): Promise<void> {
       core.setOutput('versionNumber', inputVersion.replace(/^v/, ''))
       core.setOutput('successful', true)
 
-      core.setOutput('majorVersion', inputVersion.replace(/^v/, '').split('.')[0] || '')
-      core.setOutput('minorVersion', inputVersion.replace(/^v/, '').split('.')[1] || '')
-      core.setOutput('patchVersion', inputVersion.replace(/^v/, '').split('.')[2] || '')
+      core.setOutput(
+        'majorVersion',
+        inputVersion.replace(/^v/, '').split('.')[0] || ''
+      )
+      core.setOutput(
+        'minorVersion',
+        inputVersion.replace(/^v/, '').split('.')[1] || ''
+      )
+      core.setOutput(
+        'patchVersion',
+        inputVersion.replace(/^v/, '').split('.')[2] || ''
+      )
       core.info(
         `Tagged \x1b[32m${
           tagSha || ' - '
@@ -134,9 +143,18 @@ async function run(): Promise<void> {
     core.setOutput('versionNumber', version.replace(/^v/, ''))
     core.setOutput('successful', true)
 
-    core.setOutput('majorVersion', version.replace(/^v/, '').split('.')[0] || '')
-    core.setOutput('minorVersion', version.replace(/^v/, '').split('.')[1] || '')
-    core.setOutput('patchVersion', version.replace(/^v/, '').split('.')[2] || '')
+    core.setOutput(
+      'majorVersion',
+      version.replace(/^v/, '').split('.')[0] || ''
+    )
+    core.setOutput(
+      'minorVersion',
+      version.replace(/^v/, '').split('.')[1] || ''
+    )
+    core.setOutput(
+      'patchVersion',
+      version.replace(/^v/, '').split('.')[2] || ''
+    )
     core.info(
       `Tagged \x1b[32m${
         tagSha || ' - '
@@ -152,7 +170,7 @@ async function createTag(
   version: string
 ): Promise<string | undefined> {
   const octokit = github.getOctokit(token)
-  const tag_rsp = await octokit.git.createTag({
+  const tag_rsp = await octokit.rest.git.createTag({
     ...github.context.repo,
     tag: version,
     message: core.getInput('message'),
@@ -169,7 +187,7 @@ async function createTag(
   core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
   core.endGroup()
 
-  const ref_rsp = await octokit.git.createRef({
+  const ref_rsp = await octokit.rest.git.createRef({
     ...github.context.repo,
     ref: `refs/tags/${version}`,
     sha: tag_rsp.data.sha
