@@ -5,8 +5,13 @@ jobs:
   tags: 
     runs-on: ubuntu-18.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - run: npm install
+      - run: npm run all
 
       - name: Look Changelog
         uses: jaywcjlove/changelog-generator@v1.3.9
@@ -22,7 +27,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
-          package-path: ../package.json
+          package-path: ./package.json
 
       - name: The version of the tag created.
         run: echo "${{ steps.create_tag.outputs.version }}"
