@@ -94,7 +94,9 @@ async function run(): Promise<void> {
       }
     }
     if (!test && packagePath) {
+      console.log('packagePath:::1', packagePath)
       const resolvePackagePath = path.resolve(process.cwd(), packagePath)
+      console.log('packagePath:::2', resolvePackagePath)
       if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
         core.setFailed(`Must specify\x1b[31m package.json\x1b[0m file!`)
         return
