@@ -94,7 +94,6 @@ async function run(): Promise<void> {
       }
     }
     if (!test && packagePath) {
-      console.log('packagePath:::1', packagePath)
       const resolvePackagePath = path.resolve(process.cwd(), packagePath)
       console.log('packagePath:::2', resolvePackagePath)
       if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
@@ -107,7 +106,9 @@ async function run(): Promise<void> {
         )
         return
       }
+      console.log('resolvePackagePath:::1', resolvePackagePath)
       const pkg = require(resolvePackagePath)
+      console.log('resolvePackagePath:::1', pkg)
       core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`)
       core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`)
       core.startGroup(
