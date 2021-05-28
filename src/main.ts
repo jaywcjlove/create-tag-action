@@ -96,11 +96,13 @@ async function run(): Promise<void> {
     if (!test && packagePath) {
       const resolvePackagePath = path.resolve(process.cwd(), packagePath)
       if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
-        core.setFailed(`Must specify package.json file!`)
+        core.setFailed(`Must specify\x1b[31m package.json\x1b[0m file!`)
         return
       }
       if (!fs.existsSync(resolvePackagePath)) {
-        core.setFailed(`File ${resolvePackagePath} does not exist!`)
+        core.setFailed(
+          `File \x1b[31m${resolvePackagePath}\x1b[0m does not exist!`
+        )
         return
       }
       const pkg = require(resolvePackagePath)
