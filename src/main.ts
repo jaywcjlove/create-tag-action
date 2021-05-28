@@ -1,5 +1,6 @@
 import * as path from 'path'
 import * as fs from 'fs'
+import FS from 'fs-extra'
 import * as semver from 'semver'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
@@ -106,9 +107,9 @@ async function run(): Promise<void> {
         )
         return
       }
+      const pkg = await FS.readJson(resolvePackagePath)
       console.log('resolvePackagePath:::1', resolvePackagePath)
-      const pkg = require(resolvePackagePath)
-      console.log('resolvePackagePath:::1', pkg)
+      console.log('resolvePackagePath:::2', pkg)
       core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`)
       core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`)
       core.startGroup(
