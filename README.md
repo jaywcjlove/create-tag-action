@@ -87,18 +87,19 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
 
 ```yml
 - name: Create Release
-  uses: actions/create-release@latest
+  uses: ncipollo/release-action@v1
   if: steps.create_tag.outputs.successful
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
-    tag_name: ${{ steps.create_tag.outputs.version }}
-    release_name: ${{ steps.create_tag.outputs.version }}
+    token: ${{ secrets.GITHUB_TOKEN }}
+    name: ${{ steps.create_tag.outputs.version }}
+    tag: ${{ steps.create_tag.outputs.version }}
     body: |
+      ```bash
+      npm i @uiw/react-heat-map@${{steps.create_tag.outputs.versionNumber}}
+      ```
+
       ${{ steps.changelog.outputs.compareurl }}
       ${{ steps.changelog.outputs.changelog }}
-    draft: false
-    prerelease: false
 ```
 
 ## Related
