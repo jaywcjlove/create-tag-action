@@ -11,6 +11,7 @@
     "lint": "eslint src/**/*.ts",
     "package": "ncc build src/main.ts",
     "test": "jest",
+    "test:watch": "jest --watch",
     "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
   },
   "repository": {
@@ -41,7 +42,6 @@
     "@types/jest": "^26.0.23",
     "@types/node": "^15.6.1",
     "@types/semver": "^7.3.6",
-    "@typescript-eslint/parser": "^4.25.0",
     "@vercel/ncc": "0.28.6",
     "husky": "6.0.0",
     "eslint": "^7.27.0",

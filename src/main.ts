@@ -1,18 +1,9 @@
 import * as path from 'path'
-import * as fs from 'fs'
 import FS from 'fs-extra'
 import * as semver from 'semver'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-
-const getVersion = (ver: string): string => {
-  let currentVersion = ''
-  ver.replace(/([v|V]\d(\.\d+){0,2})/i, (str: string) => {
-    currentVersion = str
-    return str
-  })
-  return currentVersion
-}
+import {getVersion} from './utils'
 
 async function run(): Promise<void> {
   try {
@@ -69,7 +60,6 @@ async function run(): Promise<void> {
       )
       return
     }
-    console.log('packagePath:::', packagePath)
     if (!test && !packagePath) {
       core.setFailed(
         'Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m!'
@@ -96,20 +86,17 @@ async function run(): Promise<void> {
     }
     if (!test && packagePath) {
       const resolvePackagePath = path.resolve(process.cwd(), packagePath)
-      console.log('packagePath:::2', resolvePackagePath)
       if (!/^package.json$/.test(path.basename(resolvePackagePath))) {
         core.setFailed(`Must specify\x1b[31m package.json\x1b[0m file!`)
         return
       }
-      if (!fs.existsSync(resolvePackagePath)) {
+      if (!FS.existsSync(resolvePackagePath)) {
         core.setFailed(
           `File \x1b[31m${resolvePackagePath}\x1b[0m does not exist!`
         )
         return
       }
       const pkg = await FS.readJson(resolvePackagePath)
-      console.log('resolvePackagePath:::1', resolvePackagePath)
-      console.log('resolvePackagePath:::2', pkg)
       core.info(`Package Name: \x1b[33m${pkg.name || '-'}\x1b[0m`)
       core.info(`Package Description: \x1b[33m${pkg.description || '-'}\x1b[0m`)
       core.startGroup(
