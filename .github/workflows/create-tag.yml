@@ -14,7 +14,7 @@ jobs:
       - run: npm run all
 
       - name: Look Changelog
-        uses: jaywcjlove/changelog-generator@v1.3.9
+        uses: jaywcjlove/changelog-generator@v1.4.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           filter-author: (jaywcjlove|小弟调调™)
@@ -52,13 +52,17 @@ jobs:
 
       - name: Generate Changelog
         id: changelog
-        uses: jaywcjlove/changelog-generator@v1.3.9
+        uses: jaywcjlove/changelog-generator@v1.4.0
         if: steps.create_tag.outputs.successful
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           head-ref: ${{steps.create_tag.outputs.version}}
           filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
           filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+
+      - run: echo "changelog -> ${{ steps.changelog.outputs.tag }}"
+      - run: echo "changelog -> ${{ steps.changelog.outputs.version }}"
+      - run: echo "changelog -> ${{ steps.changelog.outputs.branch }}"
 
       - name: Create Release
         id: create_release
