@@ -28,14 +28,16 @@ async function run(): Promise<void> {
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
 
-    core.setOutput('preversion', semver.coerce(preTag))
-    core.setOutput('majorVersion', semver.major(preTag))
-    core.setOutput('minorVersion', semver.minor(preTag))
-    core.setOutput('patchVersion', semver.patch(preTag))
+    if (preTag) {
+      core.setOutput('preversion', semver.coerce(preTag)?.raw)
+      core.setOutput('majorVersion', semver.major(preTag))
+      core.setOutput('minorVersion', semver.minor(preTag))
+      core.setOutput('patchVersion', semver.patch(preTag))
+    }
     if (inputVersion) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
-      core.setOutput('versionNumber', semver.coerce(inputVersion))
+      core.setOutput('versionNumber', semver.coerce(inputVersion)?.raw)
       core.setOutput('successful', true)
       core.setOutput('majorVersion', semver.major(inputVersion))
       core.setOutput('minorVersion', semver.minor(inputVersion))
@@ -120,7 +122,7 @@ async function run(): Promise<void> {
     const tagSha = await createTag(myToken, version)
 
     core.setOutput('version', version || preTag)
-    core.setOutput('versionNumber', semver.coerce(version))
+    core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
     core.setOutput('successful', true)
 
     core.setOutput('majorVersion', semver.major(version))
