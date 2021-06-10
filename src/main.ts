@@ -14,10 +14,7 @@ async function run(): Promise<void> {
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
-    const listTags = await octokit.rest.repos.listTags({
-      owner: owner as unknown as string,
-      repo: repo as unknown as string
-    })
+    const listTags = await octokit.rest.repos.listTags({owner, repo})
     if (listTags.status !== 200) {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
       return
@@ -30,29 +27,19 @@ async function run(): Promise<void> {
     }
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
-    // Before successful
-    core.setOutput('preversion', preTag.replace(/^v/, ''))
-    core.setOutput('majorVersion', preTag.replace(/^v/, '').split('.')[0] || '')
-    core.setOutput('minorVersion', preTag.replace(/^v/, '').split('.')[1] || '')
-    core.setOutput('patchVersion', preTag.replace(/^v/, '').split('.')[2] || '')
+
+    core.setOutput('preversion', semver.coerce(preTag))
+    core.setOutput('majorVersion', semver.major(preTag))
+    core.setOutput('minorVersion', semver.minor(preTag))
+    core.setOutput('patchVersion', semver.patch(preTag))
     if (inputVersion) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
-      core.setOutput('versionNumber', inputVersion.replace(/^v/, ''))
+      core.setOutput('versionNumber', semver.coerce(inputVersion))
       core.setOutput('successful', true)
-
-      core.setOutput(
-        'majorVersion',
-        inputVersion.replace(/^v/, '').split('.')[0] || ''
-      )
-      core.setOutput(
-        'minorVersion',
-        inputVersion.replace(/^v/, '').split('.')[1] || ''
-      )
-      core.setOutput(
-        'patchVersion',
-        inputVersion.replace(/^v/, '').split('.')[2] || ''
-      )
+      core.setOutput('majorVersion', semver.major(inputVersion))
+      core.setOutput('minorVersion', semver.minor(inputVersion))
+      core.setOutput('patchVersion', semver.patch(inputVersion))
       core.info(
         `Tagged \x1b[32m${
           tagSha || ' - '
@@ -132,22 +119,14 @@ async function run(): Promise<void> {
 
     const tagSha = await createTag(myToken, version)
 
-    core.setOutput('version', version)
-    core.setOutput('versionNumber', version.replace(/^v/, ''))
+    core.setOutput('version', version || preTag)
+    core.setOutput('versionNumber', semver.coerce(version))
     core.setOutput('successful', true)
 
-    core.setOutput(
-      'majorVersion',
-      version.replace(/^v/, '').split('.')[0] || ''
-    )
-    core.setOutput(
-      'minorVersion',
-      version.replace(/^v/, '').split('.')[1] || ''
-    )
-    core.setOutput(
-      'patchVersion',
-      version.replace(/^v/, '').split('.')[2] || ''
-    )
+    core.setOutput('majorVersion', semver.major(version))
+    core.setOutput('minorVersion', semver.minor(version))
+    core.setOutput('patchVersion', semver.patch(version))
+
     core.info(
       `Tagged \x1b[32m${
         tagSha || ' - '

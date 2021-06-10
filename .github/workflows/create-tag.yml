@@ -29,30 +29,17 @@ jobs:
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
           package-path: ./package.json
 
-      - name: The version of the tag created.
-        run: echo "${{ steps.create_tag.outputs.version }}"
-
-      - name: The version number of the tag created.
-        run: echo "${{ steps.create_tag.outputs.versionNumber }}"
-
-      - name: The MAJOR version number of the tag created.
-        run: echo "${{ steps.create_tag.outputs.majorVersion }}"
-
-      - name: The MINOR version number of the tag created.
-        run: echo "${{ steps.create_tag.outputs.minorVersion }}"
-
-      - name: The PATCH version number of the tag created.
-        run: echo "${{ steps.create_tag.outputs.patchVersion }}"
-
-      - name: The previous tag version number.
-        run: echo "${{ steps.create_tag.outputs.preversion }}"
-
-      - name: The tag was successfully created.
-        run: echo "${{ steps.create_tag.outputs.successful }}"
+      - run: echo "version - ${{ steps.create_tag.outputs.version }}"
+      - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
+      - run: echo "majorVersion - ${{ steps.create_tag.outputs.majorVersion }}"
+      - run: echo "minorVersion - ${{ steps.create_tag.outputs.minorVersion }}"
+      - run: echo "patchVersion - ${{ steps.create_tag.outputs.patchVersion }}"
+      - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
+      - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
 
       - name: Generate Changelog
         id: changelog
-        uses: jaywcjlove/changelog-generator@v1.4.0
+        uses: jaywcjlove/changelog-generator@v1.4.1
         if: steps.create_tag.outputs.successful
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
