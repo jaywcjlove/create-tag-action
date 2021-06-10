@@ -34,6 +34,18 @@ The path of the `package.json` file.
 - `minorVersion` MINOR version when you add functionality in a backwards compatible manner, and.
 - `patchVersion` PATCH version when you make backwards compatible bug fixes.
 
+```yml
+- run: echo "version - ${{ steps.create_tag.outputs.version }}"
+- run: echo "version || preversion - ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}"
+- run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
+- run: echo "versionNumber || preversionNumber - ${{ steps.create_tag.outputs.versionNumber || steps.create_tag.outputs.preversionNumber }}"
+- run: echo "majorVersion - ${{ steps.create_tag.outputs.majorVersion }}"
+- run: echo "minorVersion - ${{ steps.create_tag.outputs.minorVersion }}"
+- run: echo "patchVersion - ${{ steps.create_tag.outputs.patchVersion }}"
+- run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
+- run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
+```
+
 ## Example Usage
 
 First, we must listen for `push` events
