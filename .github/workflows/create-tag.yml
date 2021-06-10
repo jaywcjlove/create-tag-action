@@ -30,7 +30,7 @@ jobs:
           package-path: ./package.json
 
       - run: echo "version - ${{ steps.create_tag.outputs.version }}"
-      - run: echo "version | preversion - ${{ steps.create_tag.outputs.version | steps.create_tag.outputs.preversion }}"
+      - run: echo "version || preversion - ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}"
       - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
       - run: echo "majorVersion - ${{ steps.create_tag.outputs.majorVersion }}"
       - run: echo "minorVersion - ${{ steps.create_tag.outputs.minorVersion }}"
