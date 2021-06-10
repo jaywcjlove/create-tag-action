@@ -32,6 +32,7 @@ jobs:
       - run: echo "version - ${{ steps.create_tag.outputs.version }}"
       - run: echo "version || preversion - ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}"
       - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
+      - run: echo "versionNumber || preversionNumber - ${{ steps.create_tag.outputs.versionNumber || steps.create_tag.outputs.preversionNumber }}"
       - run: echo "majorVersion - ${{ steps.create_tag.outputs.majorVersion }}"
       - run: echo "minorVersion - ${{ steps.create_tag.outputs.minorVersion }}"
       - run: echo "patchVersion - ${{ steps.create_tag.outputs.patchVersion }}"

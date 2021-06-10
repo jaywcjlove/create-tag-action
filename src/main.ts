@@ -29,7 +29,8 @@ async function run(): Promise<void> {
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
 
     if (preTag) {
-      core.setOutput('preversion', semver.coerce(preTag)?.raw)
+      core.setOutput('preversion', semver.coerce(preTag)?.version)
+      core.setOutput('preversionNumber', semver.coerce(preTag)?.raw)
       core.setOutput('majorVersion', semver.major(preTag))
       core.setOutput('minorVersion', semver.minor(preTag))
       core.setOutput('patchVersion', semver.patch(preTag))
