@@ -119,6 +119,11 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
 
 - [Github Release Changelog Generator](https://github.com/jaywcjlove/changelog-generator) A GitHub Action that compares the commit differences between two branches
 
+## Example
+
+- [uiwjs/react-md-editor](https://github.com/uiwjs/react-md-editor/blob/e3293bca45bff08110ef5e9119d907db2ec95baa/.github/workflows/ci.yml#L23-L28)
+- [uiwjs/react-code-preview](https://github.com/uiwjs/react-code-preview/blob/fb9829440a21fddbb57100db62ae113be3c01161/.github/workflows/ci.yml#L35-L40)
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](./LICENSE)
