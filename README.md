@@ -121,8 +121,10 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
 
 ## Example
 
-- [uiwjs/react-md-editor](https://github.com/uiwjs/react-md-editor/blob/e3293bca45bff08110ef5e9119d907db2ec95baa/.github/workflows/ci.yml#L23-L28)
-- [uiwjs/react-code-preview](https://github.com/uiwjs/react-code-preview/blob/fb9829440a21fddbb57100db62ae113be3c01161/.github/workflows/ci.yml#L35-L40)
+- [react-code-preview](https://github.com/uiwjs/react-code-preview/blob/fb9829440a21fddbb57100db62ae113be3c01161/.github/workflows/ci.yml#L35-L40)
+- [react-md-editor](https://github.com/uiwjs/react-md-editor/blob/e3293bca45bff08110ef5e9119d907db2ec95baa/.github/workflows/ci.yml#L23-L28)
+- [react-markdown-preview](https://github.com/uiwjs/react-markdown-preview/blob/b230eba6526786cbd7318e514276fd05ae58edc9/.github/workflows/ci.yml#L21-L26)
+- [react-native-uiw](https://github.com/uiwjs/react-native-uiw/blob/9876540e78df61b5c5d906451b3c76bb2168c23c/.github/workflows/ci.yml#L22-L27)
 
 ## License
 
