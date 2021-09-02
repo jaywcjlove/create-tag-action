@@ -1,4 +1,4 @@
-import {getVersion} from './utils'
+import {getVersion} from '../src/utils'
 
 test('get version', async () => {
   expect(getVersion('released v1.2.0')).toEqual('v1.2.0')

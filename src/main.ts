@@ -1,8 +1,8 @@
-import * as path from 'path'
-import FS from 'fs-extra'
-import * as semver from 'semver'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import FS from 'fs-extra'
+import path from 'path'
+import semver from 'semver'
 import {getVersion} from './utils'
 
 async function run(): Promise<void> {
@@ -136,6 +136,7 @@ async function run(): Promise<void> {
       }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
     )
   } catch (error) {
+    // @ts-ignore
     core.setFailed(error.message)
   }
 }
@@ -183,5 +184,6 @@ async function createTag(
 try {
   run()
 } catch (error) {
+  // @ts-ignore
   core.setFailed(error.message)
 }
