@@ -52,7 +52,7 @@
     "@types/jest": "27.0.1",
     "@types/node": "16.7.10",
     "@types/semver": "7.3.8",
-    "@vercel/ncc": "0.30.0",
+    "@vercel/ncc": "0.31.1",
     "husky": "7.0.2",
     "eslint": "7.32.0",
     "eslint-plugin-github": "4.2.0",
