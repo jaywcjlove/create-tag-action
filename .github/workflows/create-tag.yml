@@ -24,10 +24,9 @@ jobs:
           publish_dir: ./build
 
       - name: Look Changelog
-        uses: jaywcjlove/changelog-generator@v1.4.6
+        uses: jaywcjlove/changelog-generator@v1.4.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          filter-author: (小弟调调™)
           filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 
       - run: ls -al
@@ -52,11 +51,10 @@ jobs:
 
       - name: Generate Changelog
         id: changelog
-        uses: jaywcjlove/changelog-generator@v1.4.6
+        uses: jaywcjlove/changelog-generator@v1.4.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           head-ref: ${{steps.create_tag.outputs.version}}
-          filter-author: (小弟调调™|Renovate Bot)
           filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 
       - run: echo "changelog -> ${{ steps.changelog.outputs.tag }}"
@@ -64,16 +62,15 @@ jobs:
       - run: echo "changelog -> ${{ steps.changelog.outputs.branch }}"
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
+        uses: ncipollo/release-action@v1
         if: steps.create_tag.outputs.successful
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create_tag.outputs.version }}
-          release_name: ${{ steps.create_tag.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ steps.create_tag.outputs.version }}
+          tag: ${{ steps.create_tag.outputs.version }}
           body: |
             ${{ steps.changelog.outputs.compareurl }}
+
             ```yml
             - name: Create Tags From
               uses: jaywcjlove/create-tag-action@${{ steps.create_tag.outputs.version }}
@@ -82,6 +79,5 @@ jobs:
                 test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
                 # package-path: ./package.json
             ```
+
             ${{ steps.changelog.outputs.changelog }}
-          draft: false
-          prerelease: false
