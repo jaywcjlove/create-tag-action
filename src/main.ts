@@ -132,10 +132,11 @@ async function run(): Promise<void> {
       }
       version = `v${pkg.version}`
       if (preTag && !semver.gt(pkg.version, preTag)) {
+        // await octokit.rest.repos.relea
         const byTag = await octokit.rest.repos.getReleaseByTag({
           owner,
           repo,
-          tag: version
+          tag: preTag
         })
         core.startGroup(`Get Release By Tag:`)
         core.info(`${JSON.stringify(byTag, null, 2)}`)
