@@ -142,13 +142,13 @@ async function run(): Promise<void> {
           `The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
         if (listRelease.data && listRelease.data.length > 0) {
-          const {name} = listRelease.data[0]
+          const {tag_name} = listRelease.data[0]
           core.info(
-            `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${name}\x1b[0m.`
+            `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${tag_name}\x1b[0m.`
           )
           core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`)
-          core.info(`v1 > v2: ${semver.gt(`v${pkg.version}`, name || '')}`)
-          if (name && semver.gt(`v${pkg.version}`, name) && release) {
+          core.info(`v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}`)
+          if (tag_name && semver.gt(`v${pkg.version}`, tag_name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
               repo,
@@ -156,7 +156,7 @@ async function run(): Promise<void> {
               tag_name: `v${pkg.version}`,
               body: body || ''
             })
-            core.info(`Created Released \x1b[32m${name || ' - '}\x1b[0m`)
+            core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`)
             core.info(`Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`)
           }
         }
