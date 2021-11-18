@@ -143,6 +143,7 @@ async function run(): Promise<void> {
           const {name} = listRelease.data[0]
           if (name && semver.gt(pkg.version, name)) {
             core.setOutput('successful', true)
+            core.setOutput('version', name)
           }
         }
         return
