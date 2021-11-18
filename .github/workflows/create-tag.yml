@@ -66,8 +66,8 @@ jobs:
         if: steps.create_tag.outputs.successful
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion}}
-          tag: ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}
+          name: ${{ steps.create_tag.outputs.version }}
+          tag: ${{ steps.create_tag.outputs.version }}
           body: |
             ${{ steps.changelog.outputs.compareurl }}
 

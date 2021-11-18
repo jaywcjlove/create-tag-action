@@ -10,17 +10,20 @@ async function run(): Promise<void> {
     const myToken = core.getInput('token')
     const test = core.getInput('test')
     const packagePath = core.getInput('package-path')
+    // Example: v1.0.0
     const inputVersion = core.getInput('version')
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
     const listTags = await octokit.rest.repos.listTags({owner, repo})
-    core.setOutput('successful', false)
     if (listTags.status !== 200) {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
       return
     }
     core.info(`Repos ${owner}/${repo} List Tag`)
+    core.startGroup(`Tag List Info:`)
+    core.info(`${JSON.stringify(listTags, null, 2)}`)
+    core.endGroup()
     for (const tagData of listTags.data) {
       core.startGroup(`Tag: ${tagData.name} ${tagData.commit.sha}`)
       core.info(`${JSON.stringify(tagData, null, 2)}`)
@@ -36,6 +39,7 @@ async function run(): Promise<void> {
       core.setOutput('minorVersion', semver.minor(preTag))
       core.setOutput('patchVersion', semver.patch(preTag))
     }
+
     if (inputVersion) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
