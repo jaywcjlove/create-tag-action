@@ -14523,7 +14523,9 @@ function run() {
                 core.setOutput('minorVersion', semver_1.default.minor(inputVersion));
                 core.setOutput('patchVersion', semver_1.default.patch(inputVersion));
                 core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
+                core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`);
                 if (release) {
+                    // octokit.rest.repos.createRelease
                     yield octokit.rest.repos.createRelease({
                         owner,
                         repo,
@@ -14583,17 +14585,20 @@ function run() {
                     core.endGroup();
                     core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
                     if (listRelease.data && listRelease.data.length > 0) {
-                        const { name } = listRelease.data[0];
-                        core.info(`The new Released \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${name}\x1b[0m.`);
-                        if (name && semver_1.default.gt(pkg.version, name) && release) {
+                        const { tag_name } = listRelease.data[0];
+                        core.info(`The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${tag_name}\x1b[0m.`);
+                        core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`);
+                        core.info(`v1 > v2: ${semver_1.default.gt(`v${pkg.version}`, tag_name || '')}`);
+                        if (tag_name && semver_1.default.gt(`v${pkg.version}`, tag_name) && release) {
                             yield octokit.rest.repos.createRelease({
                                 owner,
                                 repo,
                                 prerelease: !!prerelease,
-                                tag_name: name,
+                                tag_name: `v${pkg.version}`,
                                 body: body || ''
                             });
-                            core.info(`Created Released \x1b[32m${name || ' - '}\x1b[0m`);
+                            core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`);
+                            core.info(`Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`);
                         }
                     }
                     return;
@@ -14609,14 +14614,7 @@ function run() {
                 core.info(`Create tag \x1b[32m${version}\x1b[0m`);
             }
             const tagSha = yield createTag(myToken, version);
-            const byTag = yield octokit.rest.repos.getReleaseByTag({
-                owner,
-                repo,
-                tag: version
-            });
-            core.startGroup(`Get Release By Tag:`);
-            core.info(`${JSON.stringify(byTag, null, 2)}`);
-            core.endGroup();
+            core.info(`${owner} ${repo} ${version} - ${preTag}`);
             core.setOutput('version', version || preTag);
             core.setOutput('versionNumber', (_d = semver_1.default.coerce(version || preTag)) === null || _d === void 0 ? void 0 : _d.raw);
             core.setOutput('successful', true);
