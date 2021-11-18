@@ -20,6 +20,9 @@ async function run(): Promise<void> {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
       return
     }
+    core.startGroup(`Payload Info:`)
+    core.info(`${JSON.stringify(github.context.payload, null, 2)}`)
+    core.endGroup()
     core.info(`Repos ${owner}/${repo} List Tag`)
     core.startGroup(`Tag List Info:`)
     core.info(`${JSON.stringify(listTags, null, 2)}`)
@@ -29,16 +32,17 @@ async function run(): Promise<void> {
       core.info(`${JSON.stringify(tagData, null, 2)}`)
       core.endGroup()
     }
-    const reltag = await octokit.rest.repos.getReleaseByTag()
-    core.startGroup(`Release By Tag Info:`)
-    core.info(`${JSON.stringify(reltag, null, 2)}`)
-    core.endGroup()
+    let preversion = ''
+    let preversionNumber = ''
+    // Example: v1.2.1
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
 
     if (preTag) {
-      core.setOutput('preversion', semver.coerce(preTag)?.version)
-      core.setOutput('preversionNumber', semver.coerce(preTag)?.raw)
+      preversion = semver.coerce(preTag)?.version || ''
+      preversionNumber = semver.coerce(preTag)?.raw || ''
+      core.setOutput('preversion', preversion)
+      core.setOutput('preversionNumber', preversionNumber)
       core.setOutput('majorVersion', semver.major(preTag))
       core.setOutput('minorVersion', semver.minor(preTag))
       core.setOutput('patchVersion', semver.patch(preTag))
