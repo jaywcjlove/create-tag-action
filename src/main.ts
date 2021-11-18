@@ -152,7 +152,7 @@ async function run(): Promise<void> {
               owner,
               repo,
               prerelease: !!prerelease,
-              tag_name: name,
+              tag_name: pkg.version || preTag,
               body: body || ''
             })
             core.info(`Created Released \x1b[32m${name || ' - '}\x1b[0m`)
