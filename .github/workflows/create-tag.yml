@@ -35,8 +35,23 @@ jobs:
         id: create_tag
         uses: ./
         with:
+          release: true
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
           package-path: ./package.json
+          body: |
+            ${{ steps.changelog.outputs.compareurl }}
+
+            ```yml
+            - name: Create Tags From
+              uses: jaywcjlove/create-tag-action@${{ steps.create_tag.outputs.version }}
+              with:
+                token: # Your GITHUB_TOKEN
+                test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+                # package-path: ./package.json
+            ```
+
+            ${{ steps.changelog.outputs.changelog }}
+
 
       - run: echo "version - ${{ steps.create_tag.outputs.version }}"
       - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
@@ -60,24 +75,3 @@ jobs:
       - run: echo "changelog -> ${{ steps.changelog.outputs.tag }}"
       - run: echo "changelog -> ${{ steps.changelog.outputs.version }}"
       - run: echo "changelog -> ${{ steps.changelog.outputs.branch }}"
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        if: steps.create_tag.outputs.successful
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ steps.create_tag.outputs.version }}
-          tag: ${{ steps.create_tag.outputs.version }}
-          body: |
-            ${{ steps.changelog.outputs.compareurl }}
-
-            ```yml
-            - name: Create Tags From
-              uses: jaywcjlove/create-tag-action@${{ steps.create_tag.outputs.version }}
-              with:
-                token: # Your GITHUB_TOKEN
-                test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
-                # package-path: ./package.json
-            ```
-
-            ${{ steps.changelog.outputs.changelog }}

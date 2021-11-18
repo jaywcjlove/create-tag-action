@@ -9,6 +9,9 @@ async function run(): Promise<void> {
   try {
     const myToken = core.getInput('token')
     const test = core.getInput('test')
+    const body = core.getInput('body') || ''
+    const release = core.getInput('release')
+    const prerelease = core.getInput('prerelease')
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
     const inputVersion = core.getInput('version')
@@ -142,6 +145,16 @@ async function run(): Promise<void> {
     core.setOutput('majorVersion', semver.major(version))
     core.setOutput('minorVersion', semver.minor(version))
     core.setOutput('patchVersion', semver.patch(version))
+
+    if (release) {
+      await octokit.rest.repos.createRelease({
+        owner,
+        repo,
+        prerelease: !!prerelease,
+        tag_name: version || preTag,
+        body: body || ''
+      })
+    }
 
     core.info(
       `Tagged \x1b[32m${

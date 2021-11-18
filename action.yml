@@ -22,6 +22,21 @@ inputs:
     default: ''
     required: false
 
+  body:
+    description: 'An optional body for the release.'
+    default: ''
+    required: false
+
+  release:
+    description: 'Optionally marks this tag as release. Set to true to enable.'
+    default: ''
+    required: false
+
+  prerelease:
+    description: 'Optionally marks this release as prerelease. Set to true to enable.'
+    default: ''
+    required: false
+
 outputs:
   version:
     description: 'The version number of the tag created. example: v1.0.0'
