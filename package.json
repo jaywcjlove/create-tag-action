@@ -25,7 +25,7 @@
   "author": "Kenny Wong",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.5.0",
+    "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "fs-extra": "10.0.0",
@@ -48,19 +48,19 @@
     "verbose": true
   },
   "devDependencies": {
-    "@types/fs-extra": "9.0.12",
-    "@types/jest": "27.0.1",
-    "@types/node": "16.7.10",
-    "@types/semver": "7.3.8",
-    "@vercel/ncc": "0.30.0",
-    "husky": "7.0.2",
-    "eslint": "7.32.0",
-    "eslint-plugin-github": "4.2.0",
-    "eslint-plugin-jest": "24.4.0",
-    "jest": "27.1.0",
-    "jest-circus": "27.1.0",
-    "prettier": "2.3.2",
-    "ts-jest": "27.0.5",
-    "typescript": "4.4.2"
+    "@types/fs-extra": "9.0.13",
+    "@types/jest": "27.0.2",
+    "@types/node": "16.11.7",
+    "@types/semver": "7.3.9",
+    "@vercel/ncc": "0.32.0",
+    "husky": "7.0.4",
+    "eslint": "8.2.0",
+    "eslint-plugin-github": "4.3.5",
+    "eslint-plugin-jest": "25.2.4",
+    "jest": "27.3.1",
+    "jest-circus": "27.3.1",
+    "prettier": "2.4.1",
+    "ts-jest": "27.0.7",
+    "typescript": "4.5.2"
   }
 }
