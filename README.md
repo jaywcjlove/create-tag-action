@@ -11,6 +11,8 @@ Auto create tags from commit or package.json
 
 Your `GITHUB_TOKEN`. This is required. Why do we need `token`? Read more here: [About the GITHUB_TOKEN secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
 
+Default: `${{ github.token }}`
+
 #### `version`
 
 Create tag for specified version. Exampe: `version: v1.0.0`
