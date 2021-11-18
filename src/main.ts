@@ -151,12 +151,12 @@ async function run(): Promise<void> {
               pkg.version
             } - ${preTag} - ${!!prerelease}`
           )
-          if (name && semver.gt(pkg.version, name) && release) {
+          if (name && semver.gt(`v${pkg.version}`, name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
               repo,
               prerelease: !!prerelease,
-              tag_name: pkg.version || preTag,
+              tag_name: `v${pkg.version}`,
               body: body || ''
             })
             core.info(`Created Released \x1b[32m${name || ' - '}\x1b[0m`)
