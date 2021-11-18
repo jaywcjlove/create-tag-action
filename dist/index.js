@@ -14475,7 +14475,11 @@ function run() {
         try {
             const myToken = core.getInput('token');
             const test = core.getInput('test');
+            const body = core.getInput('body') || '';
+            const release = core.getInput('release');
+            const prerelease = core.getInput('prerelease');
             const packagePath = core.getInput('package-path');
+            // Example: v1.0.0
             const inputVersion = core.getInput('version');
             const octokit = github.getOctokit(myToken);
             const { owner, repo } = github.context.repo;
@@ -14485,16 +14489,27 @@ function run() {
                 core.setFailed(`Failed to get tag lists (status=${listTags.status})`);
                 return;
             }
+            core.startGroup(`Payload Info:`);
+            core.info(`${JSON.stringify(github.context.payload, null, 2)}`);
+            core.endGroup();
             core.info(`Repos ${owner}/${repo} List Tag`);
+            core.startGroup(`Tag List Info:`);
+            core.info(`${JSON.stringify(listTags, null, 2)}`);
+            core.endGroup();
             for (const tagData of listTags.data) {
                 core.startGroup(`Tag: ${tagData.name} ${tagData.commit.sha}`);
                 core.info(`${JSON.stringify(tagData, null, 2)}`);
                 core.endGroup();
             }
+            let preversion = '';
+            let preversionNumber = '';
+            // Example: v1.2.1
             const preTag = listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : '';
             if (preTag) {
-                core.setOutput('preversion', (_a = semver_1.default.coerce(preTag)) === null || _a === void 0 ? void 0 : _a.version);
-                core.setOutput('preversionNumber', (_b = semver_1.default.coerce(preTag)) === null || _b === void 0 ? void 0 : _b.raw);
+                preversion = ((_a = semver_1.default.coerce(preTag)) === null || _a === void 0 ? void 0 : _a.version) || '';
+                preversionNumber = ((_b = semver_1.default.coerce(preTag)) === null || _b === void 0 ? void 0 : _b.raw) || '';
+                core.setOutput('preversion', preversion);
+                core.setOutput('preversionNumber', preversionNumber);
                 core.setOutput('majorVersion', semver_1.default.major(preTag));
                 core.setOutput('minorVersion', semver_1.default.minor(preTag));
                 core.setOutput('patchVersion', semver_1.default.patch(preTag));
@@ -14508,6 +14523,16 @@ function run() {
                 core.setOutput('minorVersion', semver_1.default.minor(inputVersion));
                 core.setOutput('patchVersion', semver_1.default.patch(inputVersion));
                 core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
+                if (release) {
+                    yield octokit.rest.repos.createRelease({
+                        owner,
+                        repo,
+                        prerelease: !!prerelease,
+                        tag_name: inputVersion,
+                        body: body || ''
+                    });
+                    core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`);
+                }
                 return;
             }
             if (!test && !packagePath) {
@@ -14572,6 +14597,16 @@ function run() {
             core.setOutput('majorVersion', semver_1.default.major(version));
             core.setOutput('minorVersion', semver_1.default.minor(version));
             core.setOutput('patchVersion', semver_1.default.patch(version));
+            if (release) {
+                yield octokit.rest.repos.createRelease({
+                    owner,
+                    repo,
+                    prerelease: !!prerelease,
+                    tag_name: version || preTag,
+                    body: body || ''
+                });
+                core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`);
+            }
             core.info(`Tagged \x1b[32m${tagSha || ' - '}\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`);
         }
         catch (error) {
