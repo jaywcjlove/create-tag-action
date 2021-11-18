@@ -15,6 +15,7 @@ async function run(): Promise<void> {
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
     const listTags = await octokit.rest.repos.listTags({owner, repo})
+    core.setOutput('successful', false)
     if (listTags.status !== 200) {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
       return
