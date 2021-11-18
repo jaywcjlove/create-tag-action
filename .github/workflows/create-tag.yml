@@ -39,7 +39,7 @@ jobs:
           package-path: ./package.json
 
       - run: echo "version - ${{ steps.create_tag.outputs.version }}"
-      - run: echo "version || preversion - ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}"
+      - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
       - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
       - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
       - run: echo "preversionNumber - ${{ steps.create_tag.outputs.preversionNumber }}"
@@ -66,8 +66,8 @@ jobs:
         if: steps.create_tag.outputs.successful
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ steps.create_tag.outputs.version }}
-          tag: ${{ steps.create_tag.outputs.version }}
+          name: ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion}}
+          tag: ${{ steps.create_tag.outputs.version || steps.create_tag.outputs.preversion }}
           body: |
             ${{ steps.changelog.outputs.compareurl }}
 
