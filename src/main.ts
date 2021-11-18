@@ -144,13 +144,10 @@ async function run(): Promise<void> {
         if (listRelease.data && listRelease.data.length > 0) {
           const {name} = listRelease.data[0]
           core.info(
-            `The new Released \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${name}\x1b[0m.`
+            `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${name}\x1b[0m.`
           )
-          core.info(
-            `${owner}/${repo} - ${name} ${
-              pkg.version
-            } - ${preTag} - ${!!prerelease}`
-          )
+          core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`)
+          core.info(`v1 > v2: ${semver.gt(`v${pkg.version}`, name || '')}`)
           if (name && semver.gt(`v${pkg.version}`, name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
