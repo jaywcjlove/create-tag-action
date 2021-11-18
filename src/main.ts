@@ -139,6 +139,12 @@ async function run(): Promise<void> {
         core.info(
           `The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
+        if (listRelease.data && listRelease.data.length > 0) {
+          const {name} = listRelease.data[0]
+          if (name && semver.gt(pkg.version, name)) {
+            core.setOutput('successful', true)
+          }
+        }
         return
       }
       core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`)
