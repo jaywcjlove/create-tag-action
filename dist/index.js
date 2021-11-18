@@ -14550,14 +14550,6 @@ function run() {
                 version = (0, utils_1.getVersion)(commit);
                 if (!version)
                     return;
-                const byTag = yield octokit.rest.repos.getReleaseByTag({
-                    owner,
-                    repo,
-                    tag: version
-                });
-                core.startGroup(`Get Release By Tag:`);
-                core.info(`${JSON.stringify(byTag, null, 2)}`);
-                core.endGroup();
                 if (preTag && !semver_1.default.gt(version, preTag)) {
                     core.info(`The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
                     return;
@@ -14585,7 +14577,25 @@ function run() {
                 }
                 version = `v${pkg.version}`;
                 if (preTag && !semver_1.default.gt(pkg.version, preTag)) {
+                    const listRelease = yield octokit.rest.repos.listReleases({ owner, repo });
+                    core.startGroup(`Get Release List:`);
+                    core.info(`${JSON.stringify(listRelease, null, 2)}`);
+                    core.endGroup();
                     core.info(`The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
+                    if (listRelease.data && listRelease.data.length > 0) {
+                        const { name } = listRelease.data[0];
+                        core.info(`The new Released \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${name}\x1b[0m.`);
+                        if (name && semver_1.default.gt(pkg.version, name) && release) {
+                            yield octokit.rest.repos.createRelease({
+                                owner,
+                                repo,
+                                prerelease: !!prerelease,
+                                tag_name: name,
+                                body: body || ''
+                            });
+                            core.info(`Created Released \x1b[32m${name || ' - '}\x1b[0m`);
+                        }
+                    }
                     return;
                 }
                 core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`);
