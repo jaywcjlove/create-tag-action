@@ -67,6 +67,7 @@ async function run(): Promise<void> {
 
       core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`)
       if (release) {
+        // octokit.rest.repos.createRelease
         await octokit.rest.repos.createRelease({
           owner,
           repo,
@@ -145,6 +146,7 @@ async function run(): Promise<void> {
           core.info(
             `The new Released \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${name}\x1b[0m.`
           )
+          core.info(`${owner} ${repo} ${name} - ${preTag} -${!!prerelease}`)
           if (name && semver.gt(pkg.version, name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
