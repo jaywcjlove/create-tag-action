@@ -167,8 +167,8 @@ async function run(): Promise<void> {
     } else {
       core.info(`Create tag \x1b[32m${version}\x1b[0m`)
     }
-
     const tagSha = await createTag(myToken, version)
+    core.info(`${owner} ${repo} ${version} - ${preTag}`)
     const byTag = await octokit.rest.repos.getReleaseByTag({
       owner,
       repo,
