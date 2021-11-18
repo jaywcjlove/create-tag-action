@@ -141,6 +141,9 @@ async function run(): Promise<void> {
         )
         if (listRelease.data && listRelease.data.length > 0) {
           const {name} = listRelease.data[0]
+          core.info(
+            `The new Released \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${name}\x1b[0m.`
+          )
           if (name && semver.gt(pkg.version, name)) {
             core.setOutput('successful', true)
             core.setOutput('version', name)

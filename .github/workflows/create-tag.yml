@@ -63,7 +63,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ steps.create_tag.outputs.version }}
-          # tag: ${{ steps.create_tag.outputs.version }}
+          tag: ${{ steps.create_tag.outputs.version }}
           body: |
             ${{ steps.changelog.outputs.compareurl }}
 
