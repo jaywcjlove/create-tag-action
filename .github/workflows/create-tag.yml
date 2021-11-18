@@ -76,6 +76,8 @@ jobs:
                 # package-path: ./package.json
             ```
 
+            ${{ steps.changelog.outputs.changelog }}
+
       # - name: Create Release
       #   uses: ncipollo/release-action@v1
       #   if: steps.create_tag.outputs.successful
