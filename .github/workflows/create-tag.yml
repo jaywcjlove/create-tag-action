@@ -56,6 +56,7 @@ jobs:
       - run: echo "patchVersion - ${{ steps.create_tag.outputs.patchVersion }}"
       - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
       - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
+      - run: echo "compareurl - ${{ steps.changelog.outputs.compareurl }}"
 
       - name: Create Release
         uses: ./
