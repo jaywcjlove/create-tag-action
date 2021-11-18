@@ -4,7 +4,7 @@ author: 'Kenny Wong'
 inputs:
   token:
     description: 'Your GITHUB_TOKEN'
-    default: ''
+    default: ${{ github.token }}
     required: true
 
   version:
