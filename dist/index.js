@@ -14550,6 +14550,14 @@ function run() {
                 version = (0, utils_1.getVersion)(commit);
                 if (!version)
                     return;
+                const byTag = yield octokit.rest.repos.getReleaseByTag({
+                    owner,
+                    repo,
+                    tag: version
+                });
+                core.startGroup(`Get Release By Tag:`);
+                core.info(`${JSON.stringify(byTag, null, 2)}`);
+                core.endGroup();
                 if (preTag && !semver_1.default.gt(version, preTag)) {
                     core.info(`The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`);
                     return;
@@ -14591,6 +14599,14 @@ function run() {
                 core.info(`Create tag \x1b[32m${version}\x1b[0m`);
             }
             const tagSha = yield createTag(myToken, version);
+            const byTag = yield octokit.rest.repos.getReleaseByTag({
+                owner,
+                repo,
+                tag: version
+            });
+            core.startGroup(`Get Release By Tag:`);
+            core.info(`${JSON.stringify(byTag, null, 2)}`);
+            core.endGroup();
             core.setOutput('version', version || preTag);
             core.setOutput('versionNumber', (_d = semver_1.default.coerce(version || preTag)) === null || _d === void 0 ? void 0 : _d.raw);
             core.setOutput('successful', true);
