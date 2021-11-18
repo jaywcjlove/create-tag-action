@@ -29,6 +29,10 @@ async function run(): Promise<void> {
       core.info(`${JSON.stringify(tagData, null, 2)}`)
       core.endGroup()
     }
+    const reltag = await octokit.rest.repos.getReleaseByTag()
+    core.startGroup(`Release By Tag Info:`)
+    core.info(`${JSON.stringify(reltag, null, 2)}`)
+    core.endGroup()
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
 
