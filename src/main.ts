@@ -65,6 +65,7 @@ async function run(): Promise<void> {
         }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
       )
 
+      core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`)
       if (release) {
         await octokit.rest.repos.createRelease({
           owner,
