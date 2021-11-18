@@ -31,7 +31,7 @@ jobs:
 
       - run: ls -al
       - run: pwd
-      - name: Is a tag created auto?
+      - name: Is a tag/release created auto? 
         id: create_tag
         uses: ./
         with:

@@ -64,6 +64,17 @@ async function run(): Promise<void> {
           tagSha || ' - '
         }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
       )
+
+      if (release) {
+        await octokit.rest.repos.createRelease({
+          owner,
+          repo,
+          prerelease: !!prerelease,
+          tag_name: inputVersion,
+          body: body || ''
+        })
+        core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+      }
       return
     }
     if (!test && !packagePath) {
@@ -154,6 +165,7 @@ async function run(): Promise<void> {
         tag_name: version || preTag,
         body: body || ''
       })
+      core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
     }
 
     core.info(
