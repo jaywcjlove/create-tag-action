@@ -148,6 +148,14 @@ async function run(): Promise<void> {
     }
 
     const tagSha = await createTag(myToken, version)
+    const byTag = await octokit.rest.repos.getReleaseByTag({
+      owner,
+      repo,
+      tag: version
+    })
+    core.startGroup(`Get Release By Tag:`)
+    core.info(`${JSON.stringify(byTag, null, 2)}`)
+    core.endGroup()
 
     core.setOutput('version', version || preTag)
     core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
