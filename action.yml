@@ -5,7 +5,7 @@ inputs:
   token:
     description: 'Your GITHUB_TOKEN'
     default: ${{ github.token }}
-    required: true
+    required: false
 
   version:
     description: 'Create tag for specified version'
