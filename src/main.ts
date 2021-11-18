@@ -94,6 +94,16 @@ async function run(): Promise<void> {
     if (test && new RegExp(test).test(commit)) {
       version = getVersion(commit)
       if (!version) return
+
+      const byTag = await octokit.rest.repos.getReleaseByTag({
+        owner,
+        repo,
+        tag: version
+      })
+      core.startGroup(`Get Release By Tag:`)
+      core.info(`${JSON.stringify(byTag, null, 2)}`)
+      core.endGroup()
+
       if (preTag && !semver.gt(version, preTag)) {
         core.info(
           `The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
