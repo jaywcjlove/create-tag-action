@@ -1,5 +1,8 @@
 name: Create Tag
-on: [push]
+on: 
+  push:
+    branches:
+      - main
 
 jobs: 
   tags: 
