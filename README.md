@@ -129,7 +129,7 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
       ${{ steps.changelog.outputs.changelog }}
 ```
 
-## Related
+## See Also
 
 - [Github Release Changelog Generator](https://github.com/jaywcjlove/changelog-generator) A GitHub Action that compares the commit differences between two branches
 - [Github Action Contributors](https://github.com/jaywcjlove/github-action-contributors) Github action generates dynamic image URL for contributor list to display it!
