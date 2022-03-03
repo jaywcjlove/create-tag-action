@@ -81,6 +81,9 @@ jobs:
 
             ${{ steps.changelog.outputs.changelog }}
 
+            Document react-amap@${{ steps.changelog.outputs.tag }}:
+            https://raw.githack.com/jaywcjlove/create-tag-action/${{ steps.changelog.outputs.gh-pages-short-hash }}/index.html
+
       # - name: Create Release
       #   uses: ncipollo/release-action@v1
       #   if: steps.create_tag.outputs.successful
