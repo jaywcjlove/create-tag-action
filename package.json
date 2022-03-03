@@ -5,6 +5,7 @@
   "description": "Auto create tags from commit or package.json.",
   "main": "dist/index.js",
   "scripts": {
+    "prepare": "husky install && npm run build",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
