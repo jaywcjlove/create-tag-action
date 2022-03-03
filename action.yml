@@ -56,7 +56,7 @@ outputs:
     description: 'The tag was successfully created.'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'dist/main.js'
 
 branding:
   icon: 'tag'
