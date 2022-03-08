@@ -1,5 +1,5 @@
 create-tag-action
-----
+===
 
 [![build-test](https://github.com/jaywcjlove/create-tag-action/workflows/build-test/badge.svg)](https://github.com/actions/typescript-action/actions)
 
@@ -59,7 +59,6 @@ Compare the tag `version` number in `package.json` with the last tag and automat
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
   with:
-    token: ${{ secrets.GITHUB_TOKEN }}
     package-path: ./package.json
 ```
 
@@ -70,7 +69,6 @@ Or, Compare the tag `version` number in the `commit content` with the last tag a
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
   with:
-    token: ${{ secrets.GITHUB_TOKEN }}
     test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 ```
 
@@ -82,7 +80,6 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
   uses: jaywcjlove/changelog-generator@main
   if: steps.create_tag.outputs.successful
   with:
-    token: ${{ secrets.GITHUB_TOKEN }}
     head-ref: ${{steps.create_tag.outputs.version}}
     filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
     filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
