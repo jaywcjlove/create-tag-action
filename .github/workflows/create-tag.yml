@@ -118,8 +118,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: echo "successful - ${{ need.tags.create_tag.outputs.successful }}"
-      - run: echo "compareurl - ${{ need.tags.changelog.outputs.compareurl }}"
+      - run: echo "successful - ${{ needs.tags.create_tag.outputs.successful }}"
+      - run: echo "compareurl - ${{ needs.tags.changelog.outputs.compareurl }}"
       - name: if ....
-        if: need.tags.create_tag.outputs.successful
-        run: echo "⚠️ successful - ${{ need.tags.create_tag.outputs.successful }}"
+        if: needs.tags.create_tag.outputs.successful
+        run: echo "⚠️ successful - ${{ needs.tags.create_tag.outputs.successful }}"
