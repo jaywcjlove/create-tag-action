@@ -31,7 +31,7 @@
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "fs-extra": "10.0.0",
-    "semver": "7.3.5"
+    "semver": "7.3.7"
   },
   "jest": {
     "clearMocks": true,
@@ -65,7 +65,7 @@
     "eslint-plugin-jest": "~25.3.0",
     "husky": "~7.0.4",
     "jest": "~27.5.1",
-    "jest-circus": "~27.5.1",
+    "jest-circus": "~28.1.1",
     "lint-staged": "~12.3.4",
     "prettier": "~2.5.0",
     "ts-jest": "~27.1.3"
