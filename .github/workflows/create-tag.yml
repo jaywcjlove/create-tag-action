@@ -113,13 +113,18 @@ jobs:
       - run: echo "changelog -> ${{ steps.changelog.outputs.tag }}"
       - run: echo "changelog -> ${{ steps.changelog.outputs.version }}"
       - run: echo "changelog -> ${{ steps.changelog.outputs.branch }}"
+    outputs:
+      version: ${{ steps.changelog.outputs.version }}
+      tag: ${{ steps.changelog.outputs.tag }}
+      successful: ${{steps.create_tag.outputs.successful }}
+
   test: 
     needs: [tags]
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
-      - run: echo "compareurl - ${{ steps.changelog.outputs.compareurl }}"
+      - run: echo "successful - ${{ needs.tags.outputs.version }}"
+      - run: echo "compareurl - ${{ needs.tags.outputs.tag }}"
       - name: if ....
-        if: steps.create_tag.outputs.successful
-        run: echo "⚠️ successful - ${{ steps.create_tag.outputs.successful }}"
+        if: needs.tags.outputs.successful
+        run: echo "⚠️ successful - ${{ needs.tags.outputs.successful }}"
