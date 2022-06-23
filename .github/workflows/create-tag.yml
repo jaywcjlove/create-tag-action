@@ -64,7 +64,7 @@ jobs:
       - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
       - run: echo "compareurl - ${{ steps.changelog.outputs.compareurl }}"
       - name: if ....
-        if: needs.create_tag.outputs.successful
+        if: steps.create_tag.outputs.successful
         run: echo "⚠️ successful - ${{ steps.create_tag.outputs.successful }}"
 
       - name: Create Release
