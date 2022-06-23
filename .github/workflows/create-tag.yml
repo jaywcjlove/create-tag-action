@@ -63,6 +63,9 @@ jobs:
       - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
       - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
       - run: echo "compareurl - ${{ steps.changelog.outputs.compareurl }}"
+      - name: if ....
+        if: needs.create_tag.outputs.successful
+        run: echo "⚠️ successful - ${{ steps.create_tag.outputs.successful }}"
 
       - name: Create Release
         uses: ./
