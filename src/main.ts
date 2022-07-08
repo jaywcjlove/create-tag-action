@@ -82,7 +82,7 @@ async function run(): Promise<void> {
     }
     if (!test && !packagePath) {
       core.setFailed(
-        'Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m!'
+        'Please setting\x1b[33m test\x1b[0m/\x1b[33m package-path\x1b[0m or Specify\x1b[33m version\x1b[0m! \n Please configure\x1b[33m package-path\x1b[0m'
       )
       return
     }

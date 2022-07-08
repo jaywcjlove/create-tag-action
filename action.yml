@@ -19,7 +19,7 @@ inputs:
 
   package-path:
     description: 'The path of the package.json file.'
-    default: ''
+    default: 'package.json'
     required: false
 
   body:
@@ -60,4 +60,4 @@ runs:
 
 branding:
   icon: 'tag'
-  color: 'black'
+  color: 'green'
