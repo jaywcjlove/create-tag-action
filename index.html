@@ -164,7 +164,7 @@ customElements.define('markdown-style', MarkdownStyle);</script><markdown-style 
       <li><code>token</code> Your <code>GITHUB_TOKEN</code>. This is required. Why do we need <code>token</code>? Read more here: <a href="https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret">About the GITHUB_TOKEN secret</a>. Default: <code>${{ github.token }}</code></li>
       <li><code>version</code> Create tag for specified version. Exampe: <code>version: v1.0.0</code></li>
       <li><code>test</code> The regular expression matches the submitted content. Exampe: <code>test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'</code></li>
-      <li><code>package-path</code> The path of the <code>package.json</code> file.</li>
+      <li><code>package-path</code> The path of the <code>package.json</code> file. Default <code>package.json</code>.</li>
       <li><code>release</code> Optionally marks this tag as <code>release</code>. Set to <code>true</code> to enable.</li>
       <li><code>prerelease</code> Optionally marks this release as <code>prerelease</code>. Set to <code>true</code> to enable.</li>
       <li><code>body</code> An optional body for the release.</li>
