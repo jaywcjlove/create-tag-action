@@ -57,7 +57,7 @@
   "devDependencies": {
     "@kkt/ncc": "^1.0.14",
     "@types/fs-extra": "^9.0.13",
-    "@types/jest": "~27.4.1",
+    "@types/jest": "~28.1.7",
     "@types/node": "^18.0.3",
     "@types/semver": "^7.3.10",
     "eslint": "~8.3.0",
