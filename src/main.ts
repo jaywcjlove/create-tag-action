@@ -52,7 +52,7 @@ async function run(): Promise<void> {
       core.setOutput('patchVersion', semver.patch(preTag))
     }
 
-    if (inputVersion) {
+    if (inputVersion && semver.valid(inputVersion)) {
       const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
       core.setOutput('versionNumber', semver.coerce(inputVersion)?.raw)
