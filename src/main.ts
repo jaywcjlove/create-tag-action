@@ -28,31 +28,19 @@ async function run(): Promise<void> {
       )
       return
     }
-    core.startGroup(`Latest Release Info:`)
+    core.startGroup(
+      `Latest Release Info: (\x1b[33;1m${latestRelease.data.tag_name}\x1b[0m) created_at(\x1b[37;1m${latestRelease.data.created_at}\x1b[0m)`
+    )
     core.info(`${JSON.stringify(latestRelease.data, null, 2)}`)
     core.endGroup()
-    const listTags = await octokit.rest.repos.listTags({owner, repo})
-    if (listTags.status !== 200) {
-      core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
-      return
-    }
     core.startGroup(`Payload Info:`)
     core.info(`${JSON.stringify(github.context.payload, null, 2)}`)
     core.endGroup()
     core.info(`Repos ${owner}/${repo} List Tag`)
-    core.startGroup(`Tag List Info:`)
-    core.info(`${JSON.stringify(listTags, null, 2)}`)
-    core.endGroup()
-    for (const tagData of listTags.data) {
-      core.startGroup(`Tag: ${tagData.name} ${tagData.commit.sha}`)
-      core.info(`${JSON.stringify(tagData, null, 2)}`)
-      core.endGroup()
-    }
     let preversion = ''
     let preversionNumber = ''
     // Example: v1.2.1
-    const preTag =
-      listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
+    const preTag = latestRelease.data.tag_name || ''
 
     if (preTag && semver.valid(preTag)) {
       preversion = semver.coerce(preTag)?.version || ''
