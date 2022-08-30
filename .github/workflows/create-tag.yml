@@ -35,6 +35,12 @@ jobs:
           # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
           package-path: ./package.json
 
+      - name: Test Create Tag
+        id: create_tag
+        uses: jaywcjlove/create-tag-action@main
+        with:
+          test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+
       - name: get tag version
         id: tag_version
         uses: jaywcjlove/changelog-generator@v1.5.0
