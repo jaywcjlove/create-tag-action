@@ -18,6 +18,19 @@ async function run(): Promise<void> {
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
     const commit: string = github.context.payload.head_commit.message
+    const latestRelease = await octokit.rest.repos.getLatestRelease({
+      owner,
+      repo
+    })
+    if (latestRelease.status !== 200) {
+      core.setFailed(
+        `Failed to get latest release (status=${latestRelease.status})`
+      )
+      return
+    }
+    core.startGroup(`Latest Release Info:`)
+    core.info(`${JSON.stringify(latestRelease.data, null, 2)}`)
+    core.endGroup()
     const listTags = await octokit.rest.repos.listTags({owner, repo})
     if (listTags.status !== 200) {
       core.setFailed(`Failed to get tag lists (status=${listTags.status})`)
