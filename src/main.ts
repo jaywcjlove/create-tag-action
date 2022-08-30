@@ -102,7 +102,9 @@ async function run(): Promise<void> {
     core.info(`Commit Content: \x1b[34m${commit}\x1b[0m`)
 
     if (test && !new RegExp(test).test(commit)) {
-      core.info(`\x1b[33mThis is not a tagged push.\x1b[0m`)
+      core.info(
+        `This is the feature of\x1b[35;1m "test" + "last commit"\x1b[0m to automatically create tags. \x1b[33mThis is not a tagged push.\x1b[0m ${commit}`
+      )
       return
     }
     if (test && new RegExp(test).test(commit)) {
