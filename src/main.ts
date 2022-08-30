@@ -41,7 +41,7 @@ async function run(): Promise<void> {
     const preTag =
       listTags.data[0] && listTags.data[0].name ? listTags.data[0].name : ''
 
-    if (preTag) {
+    if (preTag && semver.valid(preTag)) {
       preversion = semver.coerce(preTag)?.version || ''
       preversionNumber = semver.coerce(preTag)?.raw || ''
       core.setOutput('version', preversion)
@@ -50,6 +50,10 @@ async function run(): Promise<void> {
       core.setOutput('majorVersion', semver.major(preTag))
       core.setOutput('minorVersion', semver.minor(preTag))
       core.setOutput('patchVersion', semver.patch(preTag))
+    }
+
+    if (preTag && !semver.valid(preTag)) {
+      core.warning(`Invalid version number \x1b[31;1m"${preTag}"\x1b[0m.`)
     }
 
     if (inputVersion && !semver.valid(inputVersion)) {
@@ -141,7 +145,7 @@ async function run(): Promise<void> {
         return
       }
       version = `v${pkg.version}`
-      if (preTag && !semver.gt(pkg.version, preTag)) {
+      if (semver.valid(preTag) && !semver.gt(pkg.version, preTag)) {
         const listRelease = await octokit.rest.repos.listReleases({owner, repo})
         core.startGroup(`Get Release List:`)
         core.info(`${JSON.stringify(listRelease, null, 2)}`)
@@ -184,12 +188,14 @@ async function run(): Promise<void> {
     core.info(`${owner} ${repo} ${version} - ${preTag}`)
     core.setOutput('version', version || preTag)
     core.info(`output version: \x1b[33m${version || preTag}\x1b[0m`)
-    core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
-    core.info(
-      `output versionNumber: \x1b[33m${
-        semver.coerce(version || preTag)?.raw
-      }\x1b[0m`
-    )
+    if (semver.valid(version || preTag)) {
+      core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
+      core.info(
+        `output versionNumber: \x1b[33m${
+          semver.coerce(version || preTag)?.raw
+        }\x1b[0m`
+      )
+    }
     core.setOutput('successful', true)
     core.info(`output successful: \x1b[33m${true}\x1b[0m`)
 
