@@ -190,7 +190,6 @@ async function run(): Promise<void> {
     } else {
       core.info(`Create tag \x1b[32m${version}\x1b[0m`)
     }
-    const tagSha = await createTag(myToken, version)
     core.info(`${owner} ${repo} ${version} - ${preTag}`)
     core.setOutput('version', version || preTag)
     core.info(`output version: \x1b[33m${version || preTag}\x1b[0m`)
@@ -221,13 +220,19 @@ async function run(): Promise<void> {
         body: body || ''
       })
       core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+      core.info(
+        `Tagged \x1b[32m${
+          version || '-'
+        }\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+      )
+    } else {
+      const tagSha = await createTag(myToken, version)
+      core.info(
+        `Tagged \x1b[32m${
+          tagSha || ' - '
+        }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+      )
     }
-
-    core.info(
-      `Tagged \x1b[32m${
-        tagSha || ' - '
-      }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
-    )
   } catch (error) {
     // @ts-ignore
     core.setFailed(error.message)
