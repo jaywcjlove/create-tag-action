@@ -65,20 +65,16 @@ async function run(): Promise<void> {
     }
 
     if (inputVersion && semver.valid(inputVersion)) {
-      const tagSha = await createTag(myToken, inputVersion)
       core.setOutput('version', inputVersion)
       core.setOutput('versionNumber', semver.coerce(inputVersion)?.raw)
       core.setOutput('successful', true)
       core.setOutput('majorVersion', semver.major(inputVersion))
       core.setOutput('minorVersion', semver.minor(inputVersion))
       core.setOutput('patchVersion', semver.patch(inputVersion))
-      core.info(
-        `Tagged \x1b[32m${
-          tagSha || ' - '
-        }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
-      )
-
       core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`)
+      core.info(
+        `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+      )
       if (release) {
         // octokit.rest.repos.createRelease
         await octokit.rest.repos.createRelease({
@@ -89,6 +85,13 @@ async function run(): Promise<void> {
           body: body || ''
         })
         core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+      } else {
+        const tagSha = await createTag(myToken, inputVersion)
+        core.info(
+          `Tagged \x1b[32m${
+            tagSha || ' - '
+          }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+        )
       }
       return
     }
