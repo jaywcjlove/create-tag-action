@@ -249,7 +249,9 @@ async function createTag(
       return
     }
     core.startGroup(
-      `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+      `CreateTag Result Data (${github.context.repo.owner}/${
+        github.context.repo.repo
+      }): \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
     )
     core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
     core.endGroup()
@@ -270,7 +272,7 @@ async function createTag(
     return tag_rsp.data.sha
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(`CREATER_ERROR:${error.message}`)
+      core.setFailed(`CREATER_ERROR: ${version}:${error.message}`)
     } else {
       core.setFailed(`CREATER_ERR:${error}`)
     }
