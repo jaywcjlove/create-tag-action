@@ -235,40 +235,46 @@ async function createTag(
   token: string,
   version: string
 ): Promise<string | undefined> {
-  const octokit = github.getOctokit(token)
-  const tag_rsp = await octokit.rest.git.createTag({
-    ...github.context.repo,
-    tag: version,
-    message: core.getInput('message'),
-    object: github.context.sha,
-    type: 'commit'
-  })
-  if (tag_rsp.status !== 201) {
-    core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
-    return
+  try {
+    const octokit = github.getOctokit(token)
+    const tag_rsp = await octokit.rest.git.createTag({
+      ...github.context.repo,
+      tag: version,
+      message: core.getInput('message'),
+      object: github.context.sha,
+      type: 'commit'
+    })
+    if (tag_rsp.status !== 201) {
+      core.setFailed(`Failed to create tag object (status=${tag_rsp.status})`)
+      return
+    }
+    core.startGroup(
+      `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+    )
+    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+    core.endGroup()
+    const ref_rsp = await octokit.rest.git.createRef({
+      ...github.context.repo,
+      ref: `refs/tags/${version}`,
+      sha: tag_rsp.data.sha
+    })
+    if (ref_rsp.status !== 201) {
+      core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
+      return
+    }
+    core.startGroup(
+      `CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
+    )
+    core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
+    core.endGroup()
+    return tag_rsp.data.sha
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(`CREATER_ERROR:${error.message}`)
+    } else {
+      core.setFailed(`CREATER_ERR:${error}`)
+    }
   }
-  core.startGroup(
-    `CreateTag Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
-  )
-  core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
-  core.endGroup()
-
-  const ref_rsp = await octokit.rest.git.createRef({
-    ...github.context.repo,
-    ref: `refs/tags/${version}`,
-    sha: tag_rsp.data.sha
-  })
-
-  if (ref_rsp.status !== 201) {
-    core.setFailed(`Failed to create tag ref(status = ${tag_rsp.status})`)
-    return
-  }
-  core.startGroup(
-    `CreateRef Result Data: \x1b[33m${tag_rsp.status || '-'}\x1b[0m `
-  )
-  core.info(`${JSON.stringify(tag_rsp, null, 2)}`)
-  core.endGroup()
-  return tag_rsp.data.sha
 }
 
 try {
