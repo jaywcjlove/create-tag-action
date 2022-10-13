@@ -274,6 +274,9 @@ async function createTag(
 try {
   run()
 } catch (error) {
-  // @ts-ignore
-  core.setFailed(error.message)
+  if (error instanceof Error) {
+    core.setFailed(`CREATE_TAG_ERROR:${error.message}`)
+  } else {
+    core.setFailed(`CREATE_TAG_ERR:${error}`)
+  }
 }
