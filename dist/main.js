@@ -3692,7 +3692,8 @@ Body.prototype = {
    * Decode response as ArrayBuffer
    *
    * @return  Promise
-   */arrayBuffer: function arrayBuffer() {
+   */
+  arrayBuffer: function arrayBuffer() {
     return consumeBody.call(this).then(function (buf) {
       return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
     });
@@ -3701,7 +3702,8 @@ Body.prototype = {
    * Return raw response as Blob
    *
    * @return Promise
-   */blob: function blob() {
+   */
+  blob: function blob() {
     var ct = this.headers && this.headers.get('content-type') || '';
     return consumeBody.call(this).then(function (buf) {
       return Object.assign(
@@ -3715,7 +3717,8 @@ Body.prototype = {
    * Decode response as json
    *
    * @return  Promise
-   */json: function json() {
+   */
+  json: function json() {
     var _this2 = this;
     return consumeBody.call(this).then(function (buffer) {
       try {
@@ -3729,7 +3732,8 @@ Body.prototype = {
    * Decode response as text
    *
    * @return  Promise
-   */text: function text() {
+   */
+  text: function text() {
     return consumeBody.call(this).then(function (buffer) {
       return buffer.toString();
     });
@@ -3738,7 +3742,8 @@ Body.prototype = {
    * Decode response as buffer (non-spec api)
    *
    * @return  Promise
-   */buffer: function buffer() {
+   */
+  buffer: function buffer() {
     return consumeBody.call(this);
   },
   /**
@@ -3746,7 +3751,8 @@ Body.prototype = {
    * trying to decode to UTF-8 (non-spec api)
    *
    * @return  Promise
-   */textConverted: function textConverted() {
+   */
+  textConverted: function textConverted() {
     var _this3 = this;
     return consumeBody.call(this).then(function (buffer) {
       return convertBody(buffer, _this3.headers);
@@ -5680,11 +5686,12 @@ var REGEX_IS_INSTALLATION = /^ghs_/;
 var REGEX_IS_USER_TO_SERVER = /^ghu_/;
 function auth(_x) {
   return _auth.apply(this, arguments);
-} /**
-   * Prefix token for usage in the Authorization header
-   *
-   * @param token OAuth token or JSON Web Token
-   */
+}
+/**
+ * Prefix token for usage in the Authorization header
+ *
+ * @param token OAuth token or JSON Web Token
+ */
 function _auth() {
   _auth = (0,asyncToGenerator/* default */.Z)( /*#__PURE__*/(0,regeneratorRuntime/* default */.Z)().mark(function _callee(token) {
     var isApp, isInstallation, isUserToServer, tokenType;
