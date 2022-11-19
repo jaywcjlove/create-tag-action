@@ -59,6 +59,7 @@ Compare the tag `version` number in `package.json` with the last tag and automat
 - name: Create Tag
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
+  if: env.previous_tag
   with:
     package-path: ./package.json
 ```
@@ -69,6 +70,7 @@ Or, Compare the tag `version` number in the `commit content` with the last tag a
 - name: Create Tag
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
+  if: env.previous_tag
   with:
     test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 ```
