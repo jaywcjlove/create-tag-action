@@ -56,6 +56,7 @@ on:
 Compare the tag `version` number in `package.json` with the last tag and automatically generate tags
 
 ```yml
+- run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 - name: Create Tag
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
@@ -67,6 +68,7 @@ Compare the tag `version` number in `package.json` with the last tag and automat
 Or, Compare the tag `version` number in the `commit content` with the last tag and automatically generate tags
 
 ```yml
+- run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 - name: Create Tag
   id: create_tag
   uses: jaywcjlove/create-tag-action@main
