@@ -1,7 +1,7 @@
 create-tag-action
 ===
 
-[![build-test](https://github.com/jaywcjlove/create-tag-action/workflows/build-test/badge.svg)](https://github.com/actions/typescript-action/actions)
+[![CI](https://github.com/jaywcjlove/create-tag-action/actions/workflows/create-tag.yml/badge.svg)](https://github.com/jaywcjlove/create-tag-action/actions/workflows/create-tag.yml)
 [![Repo Dependents](https://badgen.net/github/dependents-repo/jaywcjlove/create-tag-action)](https://github.com/jaywcjlove/create-tag-action/network/dependents)
 
 Auto create tags from commit or package.json
