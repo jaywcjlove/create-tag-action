@@ -17,7 +17,8 @@ async function run(): Promise<void> {
     const inputVersion = core.getInput('version')
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
-    const commit: string = github.context.payload.head_commit.message
+    const commit: string = github.context.payload?.head_commit?.message || ''
+    core.info(`commit: ${commit || '\x1b[31;1mNo commit found\x1b[0m'}`)
     const latestRelease = await octokit.rest.repos.getLatestRelease({
       owner,
       repo
