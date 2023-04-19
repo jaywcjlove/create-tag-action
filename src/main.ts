@@ -169,13 +169,13 @@ async function run(): Promise<void> {
           core.info(
             `v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}, v${
               pkg.version
-            } -> ${tag_name || ''}`
-          )
+            } -> ${tag_name || ''}, ${release}`
+          );
           core.info(
             `v1 <eq> v2: ${semver.eq(`v${pkg.version}`, tag_name || '')}, v${
               pkg.version
-            } -> ${tag_name || ''}`
-          )
+            } -> ${tag_name || ''}, ${release}`
+          );
           if (tag_name && !semver.eq(`v${pkg.version}`, tag_name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
