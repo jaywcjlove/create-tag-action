@@ -109,6 +109,24 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
       ${{ steps.changelog.outputs.changelog }}
 ```
 
+OR use `jaywcjlove/create-tag-action@main`: 
+
+```yml
+- name: Generate Changelog
+  uses: jaywcjlove/create-tag-action@main
+  if: steps.create_tag.outputs.successful
+  with:
+    version: ${{steps.create_tag.outputs.version}}
+    release: true
+    body: |
+      ```bash
+      npm i @uiw/react-heat-map@${{steps.create_tag.outputs.versionNumber}}
+      ```
+
+      ${{ steps.changelog.outputs.compareurl }}
+      ${{ steps.changelog.outputs.changelog }}
+```
+
 ## See Also
 
 - [Github Release Changelog Generator](https://github.com/jaywcjlove/changelog-generator) A GitHub Action that compares the commit differences between two branches
