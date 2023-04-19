@@ -176,7 +176,7 @@ async function run(): Promise<void> {
               pkg.version
             } -> ${tag_name || ''}`
           )
-          if (tag_name && semver.gt(`v${pkg.version}`, tag_name) && release) {
+          if (tag_name && !semver.eq(`v${pkg.version}`, tag_name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
               repo,
@@ -184,6 +184,7 @@ async function run(): Promise<void> {
               tag_name: `v${pkg.version}`,
               body: body || ''
             })
+            core.info(`Created Released: - v${pkg.version}`)
             core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`)
             core.info(`Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`)
           }
