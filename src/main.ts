@@ -166,17 +166,43 @@ async function run(): Promise<void> {
             `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${tag_name}\x1b[0m.`
           )
           core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`)
-          core.info(`v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}`)
-          if (tag_name && semver.gt(`v${pkg.version}`, tag_name) && release) {
-            await octokit.rest.repos.createRelease({
-              owner,
-              repo,
-              prerelease: !!prerelease,
-              tag_name: `v${pkg.version}`,
-              body: body || ''
-            })
-            core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`)
-            core.info(`Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`)
+          core.info(
+            `v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}, v${
+              pkg.version
+            } -> ${tag_name || ''}, ${release}`
+          )
+          core.info(
+            `v1 <eq> v2: ${semver.eq(`v${pkg.version}`, tag_name || '')}, v${
+              pkg.version
+            } -> ${tag_name || ''}, ${release}`
+          )
+          if (tag_name && !semver.eq(`v${pkg.version}`, tag_name)) {
+            if (release) {
+              await octokit.rest.repos.createRelease({
+                owner,
+                repo,
+                prerelease: !!prerelease,
+                tag_name: `v${pkg.version}`,
+                body: body || ''
+              })
+              core.info(`Created Released: - v${pkg.version}`)
+              core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`)
+              core.info(
+                `Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`
+              )
+            } else {
+              const tagSha = await createTag(myToken, version)
+              core.info(
+                `Tagged \x1b[32m${
+                  tagSha || ' - '
+                }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+              )
+              core.info(
+                `Created Tag: - pkg.version: v${pkg.version}, version: ${version}`
+              )
+              core.info(`Created Tag \x1b[32m${tag_name || ' - '}\x1b[0m`)
+              core.info(`Created Tag Body: \x1b[32m${body || ' - '}\x1b[0m`)
+            }
           }
         }
         return

@@ -1,0 +1,33 @@
+name: CI - Test Branch
+on: 
+  push:
+    branches:
+      - test
+
+jobs: 
+  tags:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - run: npm install
+      - run: npm run all
+      - name: Is a tag/release created auto? 
+        id: create_tag
+        uses: ./
+        with:
+          # test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+          package-path: ./package.json
+
+
+      - run: echo "version - ${{ steps.create_tag.outputs.version }}"
+      - run: echo "versionNumber - ${{ steps.create_tag.outputs.versionNumber }}"
+      - run: echo "preversionNumber - ${{ steps.create_tag.outputs.preversionNumber }}"
+      - run: echo "majorVersion - ${{ steps.create_tag.outputs.majorVersion }}"
+      - run: echo "minorVersion - ${{ steps.create_tag.outputs.minorVersion }}"
+      - run: echo "patchVersion - ${{ steps.create_tag.outputs.patchVersion }}"
+      - run: echo "preversion - ${{ steps.create_tag.outputs.preversion }}"
+      - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
