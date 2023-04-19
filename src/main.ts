@@ -166,7 +166,16 @@ async function run(): Promise<void> {
             `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${tag_name}\x1b[0m.`
           )
           core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`)
-          core.info(`v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}, ${pkg.version} -> ${tag_name || ''}`);
+          core.info(
+            `v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}, v${
+              pkg.version
+            } -> ${tag_name || ''}`
+          )
+          core.info(
+            `v1 <eq> v2: ${semver.eq(`v${pkg.version}`, tag_name || '')}, v${
+              pkg.version
+            } -> ${tag_name || ''}`
+          )
           if (tag_name && semver.gt(`v${pkg.version}`, tag_name) && release) {
             await octokit.rest.repos.createRelease({
               owner,
