@@ -307,7 +307,7 @@ async function createTag(
     return tag_rsp.data.sha
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(`CREATER_ERROR: ${version}:${error.message}`)
+      core.warning(`CREATER_ERROR: ${version}: ${error.message}`)
     } else {
       core.setFailed(`CREATER_ERR:${error}`)
     }
