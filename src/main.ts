@@ -210,6 +210,8 @@ async function run(): Promise<void> {
             }
           }
         }
+        core.info(`version: ${owner} ${repo} ${version} - ${preTag}`)
+        core.setOutput('version', version || preTag)
         return
       }
       core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`)
