@@ -155,7 +155,11 @@ async function run(): Promise<void> {
       if (semver.valid(preTag) && !semver.gt(pkg.version, preTag)) {
         const listRelease = await octokit.rest.repos.listReleases({owner, repo})
         core.startGroup(`Get Release List:`)
-        core.info(`${JSON.stringify(listRelease, null, 2)}`)
+        if (listRelease.data && listRelease.data.length > 0) {
+          listRelease.data.forEach((item) => {
+            core.info(`${item.tag_name} -> ${item.name}`);
+          });
+        }
         core.endGroup()
         core.info(
           `The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
@@ -202,6 +206,7 @@ async function run(): Promise<void> {
               )
               core.info(`Created Tag \x1b[32m${tag_name || ' - '}\x1b[0m`)
               core.info(`Created Tag Body: \x1b[32m${body || ' - '}\x1b[0m`)
+              core.info(`Pre Tag: \x1b[32m${preTag || ' - '}\x1b[0m`)
             }
           }
         }
