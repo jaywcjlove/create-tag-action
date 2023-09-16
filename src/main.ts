@@ -156,9 +156,9 @@ async function run(): Promise<void> {
         const listRelease = await octokit.rest.repos.listReleases({owner, repo})
         core.startGroup(`Get Release List:`)
         if (listRelease.data && listRelease.data.length > 0) {
-          listRelease.data.forEach((item) => {
-            core.info(`${item.tag_name} -> ${item.name}`);
-          });
+          for (const item of listRelease.data) {
+            core.info(`${item.tag_name} -> ${item.name}`)
+          }
         }
         core.endGroup()
         core.info(
@@ -228,9 +228,8 @@ async function run(): Promise<void> {
     if (semver.valid(version || preTag)) {
       core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
       core.info(
-        `output versionNumber: \x1b[33m${
-          semver.coerce(version || preTag)?.raw
-        }\x1b[0m`
+        `output versionNumber: \x1b[33m${semver.coerce(version || preTag)
+          ?.raw}\x1b[0m`
       )
     }
     core.setOutput('successful', true)
