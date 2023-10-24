@@ -58,7 +58,7 @@
     "@kkt/ncc": "^1.0.15",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.4.0",
-    "@types/node": "^18.14.0",
+    "@types/node": "^20.0.0",
     "@types/semver": "^7.3.13",
     "eslint": "^8.34.0",
     "eslint-plugin-github": "^4.6.1",
