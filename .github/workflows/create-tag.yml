@@ -22,6 +22,7 @@ jobs:
           site: "Create Tag {{version}}"
           menus:
             Home: index.html
+            Sponsor: https://jaywcjlove.github.io/#/sponsor
           footer: |
             <a href="https://jaywcjlove.github.io/#/sponsor" target="_blank">Sponsor</a> • 
             <a href="https://jaywcjlove.github.io/changelog-generator" target="_blank">Changelog Generator</a> • 
