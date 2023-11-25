@@ -1,6 +1,7 @@
 create-tag-action
 ===
 
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-048754?logo=buymeacoffee)](https://jaywcjlove.github.io/#/sponsor)
 [![CI](https://github.com/jaywcjlove/create-tag-action/actions/workflows/create-tag.yml/badge.svg)](https://github.com/jaywcjlove/create-tag-action/actions/workflows/create-tag.yml)
 [![Repo Dependents](https://badgen.net/github/dependents-repo/jaywcjlove/create-tag-action)](https://github.com/jaywcjlove/create-tag-action/network/dependents)
 
