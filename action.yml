@@ -55,7 +55,7 @@ outputs:
   successful:
     description: 'The tag was successfully created.'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/main.js'
 
 branding:
