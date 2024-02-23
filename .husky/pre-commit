@@ -1,1 +1,2 @@
-npm test
+npx --no lint-staged
+git add dist/
