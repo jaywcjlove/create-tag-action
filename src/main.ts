@@ -23,6 +23,7 @@ async function run(): Promise<void> {
       owner,
       repo
     })
+    core.setOutput('successful', false)
     if (latestRelease.status !== 200) {
       core.setFailed(
         `Failed to get latest release (status=${latestRelease.status})`
