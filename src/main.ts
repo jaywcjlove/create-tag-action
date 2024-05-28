@@ -3,7 +3,7 @@ import * as github from '@actions/github'
 import FS from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import {getVersion, setOutputValue} from './utils'
+import {getVersion} from './utils'
 
 async function run(): Promise<void> {
   try {
@@ -48,7 +48,14 @@ async function run(): Promise<void> {
     const preTag = latestRelease.data.tag_name || ''
 
     if (preTag && semver.valid(preTag)) {
-      setOutputValue(preTag)
+      const preversion = semver.coerce(preTag)?.version || ''
+      const preversionNumber = semver.coerce(preTag)?.raw || ''
+      core.setOutput('version', preversion)
+      core.setOutput('preversion', preversion)
+      core.setOutput('preversionNumber', preversionNumber)
+      core.setOutput('majorVersion', semver.major(preTag))
+      core.setOutput('minorVersion', semver.minor(preTag))
+      core.setOutput('patchVersion', semver.patch(preTag))
     }
 
     if (preTag && !semver.valid(preTag)) {
@@ -235,8 +242,9 @@ async function run(): Promise<void> {
     if (semver.valid(version || preTag)) {
       core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
       core.info(
-        `output versionNumber: \x1b[33m${semver.coerce(version || preTag)
-          ?.raw}\x1b[0m`
+        `output versionNumber: \x1b[33m${
+          semver.coerce(version || preTag)?.raw
+        }\x1b[0m`
       )
     }
     core.setOutput('successful', true)
