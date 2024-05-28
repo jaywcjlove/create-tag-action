@@ -268,8 +268,11 @@ async function run(): Promise<void> {
       )
     }
   } catch (error) {
-    // @ts-ignore
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(`ERROR:${error.name}:${error.message}`)
+    } else {
+      core.setFailed(`ERROR:${error}`)
+    }
   }
 }
 
