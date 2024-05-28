@@ -3,15 +3,20 @@ import * as github from '@actions/github'
 import FS from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import {getVersion} from './utils'
+import {getVersion, setOutputValue} from './utils'
 
 async function run(): Promise<void> {
   try {
     const myToken = core.getInput('token')
+    /** The regular expression matches the submitted content. */
     const test = core.getInput('test')
+    /** An optional body for the release. */
     const body = core.getInput('body') || ''
+    /** Optionally marks this tag as `release`. Set to `true` to enable. */
     const release = core.getInput('release')
+    /** Optionally marks this release as `prerelease`. Set to `true` to enable. */
     const prerelease = core.getInput('prerelease')
+    /** The path of the `package.json` file. Default `package.json`. */
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
     const inputVersion = core.getInput('version')
@@ -39,20 +44,11 @@ async function run(): Promise<void> {
     core.info(`${JSON.stringify(github.context.payload, null, 2)}`)
     core.endGroup()
     core.info(`Repos ${owner}/${repo} List Tag`)
-    let preversion = ''
-    let preversionNumber = ''
     // Example: v1.2.1
     const preTag = latestRelease.data.tag_name || ''
 
     if (preTag && semver.valid(preTag)) {
-      preversion = semver.coerce(preTag)?.version || ''
-      preversionNumber = semver.coerce(preTag)?.raw || ''
-      core.setOutput('version', preversion)
-      core.setOutput('preversion', preversion)
-      core.setOutput('preversionNumber', preversionNumber)
-      core.setOutput('majorVersion', semver.major(preTag))
-      core.setOutput('minorVersion', semver.minor(preTag))
-      core.setOutput('patchVersion', semver.patch(preTag))
+      setOutputValue(preTag)
     }
 
     if (preTag && !semver.valid(preTag)) {
@@ -69,14 +65,20 @@ async function run(): Promise<void> {
     if (inputVersion && semver.valid(inputVersion)) {
       core.setOutput('version', inputVersion)
       core.setOutput('versionNumber', semver.coerce(inputVersion)?.raw)
-      core.setOutput('successful', true)
       core.setOutput('majorVersion', semver.major(inputVersion))
       core.setOutput('minorVersion', semver.minor(inputVersion))
       core.setOutput('patchVersion', semver.patch(inputVersion))
       core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`)
       core.info(
-        `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+        `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
       )
+      if (inputVersion && semver.gt(inputVersion, preTag)) {
+        core.info(
+          `The new tag \x1b[33m${inputVersion}\x1b[0m is greater than \x1b[32m${preTag}\x1b[0m.\x1b[33m Create tag.\x1b[0m`
+        )
+        core.setOutput('successful', false)
+        return
+      }
       if (release) {
         // octokit.rest.repos.createRelease
         await octokit.rest.repos.createRelease({
@@ -87,6 +89,7 @@ async function run(): Promise<void> {
           body: body || ''
         })
         core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+        core.setOutput('successful', true)
       } else {
         const tagSha = await createTag(myToken, inputVersion)
         core.info(
@@ -94,6 +97,7 @@ async function run(): Promise<void> {
             tagSha || ' - '
           }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
         )
+        core.setOutput('successful', true)
       }
       return
     }
