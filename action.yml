@@ -32,6 +32,11 @@ inputs:
     default: ''
     required: false
 
+  draft:
+    description: 'Optionally marks this release as a draft release. Set to true to enable.'
+    default: ''
+    required: false
+
   prerelease:
     description: 'Optionally marks this release as prerelease. Set to true to enable.'
     default: ''

@@ -15,6 +15,7 @@ Auto create tags from commit or package.json
 - `package-path` The path of the `package.json` file. Default `package.json`.
 - `release` Optionally marks this tag as `release`. Set to `true` to enable.
 - `prerelease` Optionally marks this release as `prerelease`. Set to `true` to enable.
+- `draft` Optionally marks this release as a `draft` release. Set to true to enable.
 - `body` An optional body for the release.
 
 ## Outputs

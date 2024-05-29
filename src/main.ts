@@ -16,6 +16,8 @@ async function run(): Promise<void> {
     const release = core.getInput('release')
     /** Optionally marks this release as `prerelease`. Set to `true` to enable. */
     const prerelease = core.getInput('prerelease')
+    /** Optionally marks this release as a draft release. Set to true to enable. */
+    const draft = core.getInput('draft')
     /** The path of the `package.json` file. Default `package.json`. */
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
@@ -92,6 +94,7 @@ async function run(): Promise<void> {
           owner,
           repo,
           prerelease: !!prerelease,
+          draft: !!draft,
           tag_name: inputVersion,
           body: body || ''
         })
