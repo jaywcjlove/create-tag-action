@@ -13,11 +13,11 @@ async function run(): Promise<void> {
     /** An optional body for the release. */
     const body = core.getInput('body') || ''
     /** Optionally marks this tag as `release`. Set to `true` to enable. */
-    const release = core.getInput('release')
+    const release = core.getBooleanInput('release') || false
     /** Optionally marks this release as `prerelease`. Set to `true` to enable. */
-    const prerelease = core.getInput('prerelease')
+    const prerelease = core.getBooleanInput('prerelease') || false
     /** Optionally marks this release as a draft release. Set to true to enable. */
-    const draft = core.getInput('draft') ?? "false"
+    const draft = core.getBooleanInput('draft') || false
     /** The path of the `package.json` file. Default `package.json`. */
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
@@ -77,7 +77,7 @@ async function run(): Promise<void> {
       core.setOutput('majorVersion', semver.major(inputVersion))
       core.setOutput('minorVersion', semver.minor(inputVersion))
       core.setOutput('patchVersion', semver.patch(inputVersion))
-      core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${!!prerelease}`)
+      core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${prerelease}`)
       core.info(
         `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
       )
@@ -89,12 +89,11 @@ async function run(): Promise<void> {
         return
       }
       if (release) {
-        // octokit.rest.repos.createRelease
         await octokit.rest.repos.createRelease({
           owner,
           repo,
-          prerelease: !!prerelease,
-          draft: draft === "false" ? false : true,
+          prerelease: prerelease,
+          draft: draft,
           tag_name: inputVersion,
           body: body || ''
         })
