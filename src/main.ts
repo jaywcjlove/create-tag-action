@@ -92,8 +92,8 @@ async function run(): Promise<void> {
         await octokit.rest.repos.createRelease({
           owner,
           repo,
-          prerelease: prerelease,
-          draft: draft,
+          prerelease,
+          draft,
           tag_name: inputVersion,
           body: body || ''
         })
