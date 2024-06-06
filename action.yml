@@ -29,17 +29,17 @@ inputs:
 
   release:
     description: 'Optionally marks this tag as release. Set to true to enable.'
-    default: ''
+    default: false
     required: false
 
   draft:
     description: 'Optionally marks this release as a draft release. Set to true to enable.'
-    default: ''
+    default: false
     required: false
 
   prerelease:
     description: 'Optionally marks this release as prerelease. Set to true to enable.'
-    default: ''
+    default: false
     required: false
 
 outputs:
