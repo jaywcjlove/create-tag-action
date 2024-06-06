@@ -81,9 +81,9 @@ async function run(): Promise<void> {
       core.info(
         `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
       )
-      if (inputVersion && semver.gt(inputVersion, preTag)) {
+      if (inputVersion && !semver.gte(preTag, inputVersion)) {
         core.info(
-          `The new tag \x1b[33m${inputVersion}\x1b[0m is greater than \x1b[32m${preTag}\x1b[0m.\x1b[33m Create tag.\x1b[0m`
+          `The new tag \x1b[33m${inputVersion}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
         core.setOutput('successful', false)
         return
