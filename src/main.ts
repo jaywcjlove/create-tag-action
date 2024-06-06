@@ -94,7 +94,7 @@ async function run(): Promise<void> {
           owner,
           repo,
           prerelease: !!prerelease,
-          draft: draft == "false" ? false : true,
+          draft: draft === "false" ? false : true,
           tag_name: inputVersion,
           body: body || ''
         })
