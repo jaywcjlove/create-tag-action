@@ -24,7 +24,7 @@ Auto create tags from commit or package.json
 - `versionNumber` The version number of the tag created, example: `1.0.0`.
 - `preversion` The previous tag version number, example: `v1.0.0`.
 - `preversionNumber` The previous tag version number of the tag created. example: `1.0.0`.
-- `successful` The tag was successfully created.
+- `successful` The tag was successfully created. example: `"true"`.
 - `majorVersion` MAJOR version when you make incompatible API changes.
 - `minorVersion` MINOR version when you add functionality in a backwards compatible manner, and.
 - `patchVersion` PATCH version when you make backwards compatible bug fixes.
@@ -85,7 +85,7 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
 - name: Generate Changelog
   id: changelog
   uses: jaywcjlove/changelog-generator@main
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == 'true'
   with:
     head-ref: ${{steps.create_tag.outputs.version}}
     filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
@@ -97,7 +97,7 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
 ```yml
 - name: Create Release
   uses: ncipollo/release-action@v1
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == 'true'
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     name: ${{ steps.create_tag.outputs.version }}
@@ -116,7 +116,7 @@ OR use `jaywcjlove/create-tag-action@main`:
 ```yml
 - name: Generate Changelog
   uses: jaywcjlove/create-tag-action@main
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == 'true'
   with:
     version: ${{steps.create_tag.outputs.version}}
     release: true
