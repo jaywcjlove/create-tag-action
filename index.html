@@ -59,7 +59,7 @@
           <li><code>versionNumber</code> The version number of the tag created, example: <code>1.0.0</code>.</li>
           <li><code>preversion</code> The previous tag version number, example: <code>v1.0.0</code>.</li>
           <li><code>preversionNumber</code> The previous tag version number of the tag created. example: <code>1.0.0</code>.</li>
-          <li><code>successful</code> The tag was successfully created.</li>
+          <li><code>successful</code> The tag was successfully created. example: <code>"true"</code>.</li>
           <li><code>majorVersion</code> MAJOR version when you make incompatible API changes.</li>
           <li><code>minorVersion</code> MINOR version when you add functionality in a backwards compatible manner, and.</li>
           <li><code>patchVersion</code> PATCH version when you make backwards compatible bug fixes.</li>
@@ -136,7 +136,7 @@
         <pre class="language-yml"><code class="language-yml code-highlight"><span class="code-line line-number" line="1"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Generate Changelog
 </span><span class="code-line line-number" line="2">  <span class="token key atrule">id</span><span class="token punctuation">:</span> changelog
 </span><span class="code-line line-number" line="3">  <span class="token key atrule">uses</span><span class="token punctuation">:</span> jaywcjlove/changelog<span class="token punctuation">-</span>generator@main
-</span><span class="code-line line-number" line="4">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful
+</span><span class="code-line line-number" line="4">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful == 'true'
 </span><span class="code-line line-number" line="5">  <span class="token key atrule">with</span><span class="token punctuation">:</span>
 </span><span class="code-line line-number" line="6">    <span class="token key atrule">head-ref</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span>steps.create_tag.outputs.version<span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span><span class="code-line line-number" line="7">    <span class="token key atrule">filter-author</span><span class="token punctuation">:</span> (jaywcjlove<span class="token punctuation">|</span>小弟调调™<span class="token punctuation">|</span>dependabot\<span class="token punctuation">[</span>bot\<span class="token punctuation">]</span><span class="token punctuation">|</span>Renovate Bot)
@@ -144,7 +144,7 @@
 </span></code><input type="hidden" value="- name: Generate Changelog
   id: changelog
   uses: jaywcjlove/changelog-generator@main
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == &#x27;true&#x27;
   with:
     head-ref: ${{steps.create_tag.outputs.version}}
     filter-author: (jaywcjlove|小弟调调™|dependabot\[bot\]|Renovate Bot)
@@ -153,7 +153,7 @@
         <p>Use <code>steps.&#x3C;job_id>.outputs.successful</code> to determine whether the version is created successfully, the creation has been released</p>
         <pre class="language-yml"><code class="language-yml code-highlight"><span class="code-line line-number" line="1"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Create Release
 </span><span class="code-line line-number" line="2">  <span class="token key atrule">uses</span><span class="token punctuation">:</span> ncipollo/release<span class="token punctuation">-</span>action@v1
-</span><span class="code-line line-number" line="3">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful
+</span><span class="code-line line-number" line="3">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful == 'true'
 </span><span class="code-line line-number" line="4">  <span class="token key atrule">with</span><span class="token punctuation">:</span>
 </span><span class="code-line line-number" line="5">    <span class="token key atrule">token</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> secrets.GITHUB_TOKEN <span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span><span class="code-line line-number" line="6">    <span class="token key atrule">name</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.create_tag.outputs.version <span class="token punctuation">}</span><span class="token punctuation">}</span>
@@ -167,7 +167,7 @@
 </span><span class="code-line line-number" line="14">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.changelog <span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span></code><input type="hidden" value="- name: Create Release
   uses: ncipollo/release-action@v1
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == &#x27;true&#x27;
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     name: ${{ steps.create_tag.outputs.version }}
@@ -183,7 +183,7 @@
         <p>OR use <code>jaywcjlove/create-tag-action@main</code>:</p>
         <pre class="language-yml"><code class="language-yml code-highlight"><span class="code-line line-number" line="1"><span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Generate Changelog
 </span><span class="code-line line-number" line="2">  <span class="token key atrule">uses</span><span class="token punctuation">:</span> jaywcjlove/create<span class="token punctuation">-</span>tag<span class="token punctuation">-</span>action@main
-</span><span class="code-line line-number" line="3">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful
+</span><span class="code-line line-number" line="3">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful == 'true'
 </span><span class="code-line line-number" line="4">  <span class="token key atrule">with</span><span class="token punctuation">:</span>
 </span><span class="code-line line-number" line="5">    <span class="token key atrule">version</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span>steps.create_tag.outputs.version<span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span><span class="code-line line-number" line="6">    <span class="token key atrule">release</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
@@ -196,7 +196,7 @@
 </span><span class="code-line line-number" line="13">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.changelog <span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span></code><input type="hidden" value="- name: Generate Changelog
   uses: jaywcjlove/create-tag-action@main
-  if: steps.create_tag.outputs.successful
+  if: steps.create_tag.outputs.successful == &#x27;true&#x27;
   with:
     version: ${{steps.create_tag.outputs.version}}
     release: true
