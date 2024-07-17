@@ -3008,7 +3008,7 @@ function _objectWithoutPropertiesLoose(r, e) {
   if (null == r) return {};
   var t = {};
   for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
-    if (e.indexOf(n) >= 0) continue;
+    if (e.includes(n)) continue;
     t[n] = r[n];
   }
   return t;
@@ -3022,8 +3022,8 @@ function _objectWithoutProperties(e, t) {
     r,
     i = _objectWithoutPropertiesLoose(e, t);
   if (Object.getOwnPropertySymbols) {
-    var n = Object.getOwnPropertySymbols(e);
-    for (r = 0; r < n.length; r++) o = n[r], t.indexOf(o) >= 0 || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+    var s = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
   }
   return i;
 }
@@ -9183,6 +9183,8 @@ var _toConsumableArray = (__webpack_require__(1132)["default"]);
 var _createForOfIteratorHelper = (__webpack_require__(883)["default"]);
 var _classCallCheck = (__webpack_require__(7383)["default"]);
 var _createClass = (__webpack_require__(4579)["default"]);
+var SPACE_CHARACTERS = /\s+/g;
+
 // hoisted class for cyclic dependency
 var Range = /*#__PURE__*/function () {
   "use strict";
@@ -9202,7 +9204,7 @@ var Range = /*#__PURE__*/function () {
       // just put it in the set and return
       this.raw = range.value;
       this.set = [[range]];
-      this.format();
+      this.formatted = undefined;
       return this;
     }
     this.options = options;
@@ -9212,7 +9214,7 @@ var Range = /*#__PURE__*/function () {
     // First reduce all whitespace as much as possible so we do not have to rely
     // on potentially slow regexes like \s*. This is then stored and used for
     // future error messages as well.
-    this.raw = range.trim().split(/\s+/).join(' ');
+    this.raw = range.trim().replace(SPACE_CHARACTERS, ' ');
 
     // First, split on ||
     this.set = this.raw.split('||')
@@ -9258,14 +9260,31 @@ var Range = /*#__PURE__*/function () {
         }
       }
     }
-    this.format();
+    this.formatted = undefined;
   }
   return _createClass(Range, [{
+    key: "range",
+    get: function get() {
+      if (this.formatted === undefined) {
+        this.formatted = '';
+        for (var i = 0; i < this.set.length; i++) {
+          if (i > 0) {
+            this.formatted += '||';
+          }
+          var comps = this.set[i];
+          for (var k = 0; k < comps.length; k++) {
+            if (k > 0) {
+              this.formatted += ' ';
+            }
+            this.formatted += comps[k].toString().trim();
+          }
+        }
+      }
+      return this.formatted;
+    }
+  }, {
     key: "format",
     value: function format() {
-      this.range = this.set.map(function (comps) {
-        return comps.join(' ').trim();
-      }).join('||').trim();
       return this.range;
     }
   }, {
@@ -36827,8 +36846,8 @@ function _objectWithoutProperties(e, t) {
     r,
     i = objectWithoutPropertiesLoose(e, t);
   if (Object.getOwnPropertySymbols) {
-    var n = Object.getOwnPropertySymbols(e);
-    for (r = 0; r < n.length; r++) o = n[r], t.indexOf(o) >= 0 || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+    var s = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
   }
   return i;
 }
@@ -36843,7 +36862,7 @@ function _objectWithoutPropertiesLoose(r, e) {
   if (null == r) return {};
   var t = {};
   for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
-    if (e.indexOf(n) >= 0) continue;
+    if (e.includes(n)) continue;
     t[n] = r[n];
   }
   return t;
@@ -40130,8 +40149,6 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectSpread2.js
 var objectSpread2 = __webpack_require__(9379);
