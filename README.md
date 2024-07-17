@@ -41,22 +41,23 @@ Auto create tags from commit or package.json
 - run: echo "successful - ${{ steps.create_tag.outputs.successful }}"
 ```
 
-In the new action, you need to add the [`permissions`](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) configuration:
-
-```yml
-jobs: 
-  tags:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Create Tag
-        id: create_tag
-        uses: jaywcjlove/create-tag-action@main
-        if: env.previous_tag
-        with:
-          test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
-```
+> [!WARNING]
+> In the new action, you need to add the [`permissions`](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) configuration:
+> 
+> ```yml
+> jobs: 
+>   tags:
+>     runs-on: ubuntu-latest
+>     permissions:
+>       contents: write
+>     steps:
+>       - name: Create Tag
+>         id: create_tag
+>         uses: jaywcjlove/create-tag-action@main
+>         if: env.previous_tag
+>         with:
+>           test: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+> ```
 
 ## Example Usage
 
