@@ -1,6 +1,6 @@
 {
   "name": "create-tag-action",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "private": true,
   "description": "Auto create tags from commit or package.json.",
   "main": "dist/index.js",
