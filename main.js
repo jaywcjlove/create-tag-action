@@ -9013,24 +9013,24 @@ once.proto = once(function () {
   });
 });
 function once(fn) {
-  var f = function f() {
-    if (f.called) return f.value;
-    f.called = true;
-    return f.value = fn.apply(this, arguments);
+  var _f = function f() {
+    if (_f.called) return _f.value;
+    _f.called = true;
+    return _f.value = fn.apply(this, arguments);
   };
-  f.called = false;
-  return f;
+  _f.called = false;
+  return _f;
 }
 function onceStrict(fn) {
-  var f = function f() {
-    if (f.called) throw new Error(f.onceError);
-    f.called = true;
-    return f.value = fn.apply(this, arguments);
+  var _f2 = function f() {
+    if (_f2.called) throw new Error(_f2.onceError);
+    _f2.called = true;
+    return _f2.value = fn.apply(this, arguments);
   };
   var name = fn.name || 'Function wrapped with `once`';
-  f.onceError = name + " shouldn't be called more than once";
-  f.called = false;
-  return f;
+  _f2.onceError = name + " shouldn't be called more than once";
+  _f2.called = false;
+  return _f2;
 }
 
 /***/ }),
@@ -13173,8 +13173,7 @@ var _asyncToGenerator = (__webpack_require__(9293)["default"]);
 var _classCallCheck = (__webpack_require__(7383)["default"]);
 var _createClass = (__webpack_require__(4579)["default"]);
 var _callSuper = (__webpack_require__(8336)["default"]);
-var _get = (__webpack_require__(2395)["default"]);
-var _getPrototypeOf = (__webpack_require__(3072)["default"]);
+var _superPropGet = (__webpack_require__(9901)["default"]);
 var _inherits = (__webpack_require__(9511)["default"]);
 var assert = __webpack_require__(2613);
 var _require = __webpack_require__(2203),
@@ -13236,12 +13235,11 @@ module.exports = /*#__PURE__*/function (_Readable) {
       if (err) {
         this[kAbort]();
       }
-      return _get(_getPrototypeOf(BodyReadable.prototype), "destroy", this).call(this, err);
+      return _superPropGet(BodyReadable, "destroy", this, 3)([err]);
     }
   }, {
     key: "emit",
     value: function emit(ev) {
-      var _get2;
       if (ev === 'data') {
         // Node < 16.7
         this._readableState.dataEmitted = true;
@@ -13252,19 +13250,18 @@ module.exports = /*#__PURE__*/function (_Readable) {
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
-      return (_get2 = _get(_getPrototypeOf(BodyReadable.prototype), "emit", this)).call.apply(_get2, [this, ev].concat(args));
+      return _superPropGet(BodyReadable, "emit", this, 3)([ev].concat(args));
     }
   }, {
     key: "on",
     value: function on(ev) {
-      var _get3;
       if (ev === 'data' || ev === 'readable') {
         this[kReading] = true;
       }
       for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
-      return (_get3 = _get(_getPrototypeOf(BodyReadable.prototype), "on", this)).call.apply(_get3, [this, ev].concat(args));
+      return _superPropGet(BodyReadable, "on", this, 3)([ev].concat(args));
     }
   }, {
     key: "addListener",
@@ -13277,11 +13274,10 @@ module.exports = /*#__PURE__*/function (_Readable) {
   }, {
     key: "off",
     value: function off(ev) {
-      var _get4;
       for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
         args[_key4 - 1] = arguments[_key4];
       }
-      var ret = (_get4 = _get(_getPrototypeOf(BodyReadable.prototype), "off", this)).call.apply(_get4, [this, ev].concat(args));
+      var ret = _superPropGet(BodyReadable, "off", this, 3)([ev].concat(args));
       if (ev === 'data' || ev === 'readable') {
         this[kReading] = this.listenerCount('data') > 0 || this.listenerCount('readable') > 0;
       }
@@ -13300,9 +13296,9 @@ module.exports = /*#__PURE__*/function (_Readable) {
     value: function push(chunk) {
       if (this[kConsume] && chunk !== null && this.readableLength === 0) {
         consumePush(this[kConsume], chunk);
-        return this[kReading] ? _get(_getPrototypeOf(BodyReadable.prototype), "push", this).call(this, chunk) : true;
+        return this[kReading] ? _superPropGet(BodyReadable, "push", this, 3)([chunk]) : true;
       }
-      return _get(_getPrototypeOf(BodyReadable.prototype), "push", this).call(this, chunk);
+      return _superPropGet(BodyReadable, "push", this, 3)([chunk]);
     }
 
     // https://fetch.spec.whatwg.org/#dom-body-text
@@ -17383,17 +17379,17 @@ function writeStream(_ref3) {
     }
     var err = new RequestAbortedError();
     queueMicrotask(function () {
-      return onFinished(err);
+      return _onFinished(err);
     });
   };
-  var onFinished = function onFinished(err) {
+  var _onFinished = function onFinished(err) {
     if (finished) {
       return;
     }
     finished = true;
     assert(socket.destroyed || socket[kWriting] && client[kRunning] <= 1);
-    socket.off('drain', onDrain).off('error', onFinished);
-    body.removeListener('data', onData).removeListener('end', onFinished).removeListener('error', onFinished).removeListener('close', onAbort);
+    socket.off('drain', onDrain).off('error', _onFinished);
+    body.removeListener('data', onData).removeListener('end', _onFinished).removeListener('error', _onFinished).removeListener('close', onAbort);
     if (!err) {
       try {
         writer.end();
@@ -17408,11 +17404,11 @@ function writeStream(_ref3) {
       util.destroy(body);
     }
   };
-  body.on('data', onData).on('end', onFinished).on('error', onFinished).on('close', onAbort);
+  body.on('data', onData).on('end', _onFinished).on('error', _onFinished).on('close', onAbort);
   if (body.resume) {
     body.resume();
   }
-  socket.on('drain', onDrain).on('error', onFinished);
+  socket.on('drain', onDrain).on('error', _onFinished);
 }
 function writeBlob(_x3) {
   return _writeBlob.apply(this, arguments);
@@ -37230,6 +37226,21 @@ function _superPropBase(t, o) {
   return t;
 }
 module.exports = _superPropBase, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 9901:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var get = __webpack_require__(2395);
+var getPrototypeOf = __webpack_require__(3072);
+function _superPropertyGet(t, e, r, o) {
+  var p = get(getPrototypeOf(1 & o ? t.prototype : t), e, r);
+  return 2 & o ? function (t) {
+    return p.apply(r, t);
+  } : p;
+}
+module.exports = _superPropertyGet, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 

@@ -188,20 +188,22 @@
 </span><span class="code-line line-number" line="2">  <span class="token key atrule">uses</span><span class="token punctuation">:</span> ncipollo/release<span class="token punctuation">-</span>action@v1
 </span><span class="code-line line-number" line="3">  <span class="token key atrule">if</span><span class="token punctuation">:</span> steps.create_tag.outputs.successful == 'true'
 </span><span class="code-line line-number" line="4">  <span class="token key atrule">with</span><span class="token punctuation">:</span>
-</span><span class="code-line line-number" line="5">    <span class="token key atrule">token</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> secrets.GITHUB_TOKEN <span class="token punctuation">}</span><span class="token punctuation">}</span>
-</span><span class="code-line line-number" line="6">    <span class="token key atrule">name</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.create_tag.outputs.version <span class="token punctuation">}</span><span class="token punctuation">}</span>
-</span><span class="code-line line-number" line="7">    <span class="token key atrule">tag</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.create_tag.outputs.version <span class="token punctuation">}</span><span class="token punctuation">}</span>
-</span><span class="code-line line-number" line="8">    <span class="token key atrule">body</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
-</span></span><span class="code-line line-number" line="9"><span class="token scalar string">      ```bash
-</span></span><span class="code-line line-number" line="10"><span class="token scalar string">      npm i @uiw/react-heat-map@${{steps.create_tag.outputs.versionNumber}}
-</span></span><span class="code-line line-number" line="11"><span class="token scalar string">      ```</span>
-</span><span class="code-line line-number" line="12">
-</span><span class="code-line line-number" line="13">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.compareurl <span class="token punctuation">}</span><span class="token punctuation">}</span>
-</span><span class="code-line line-number" line="14">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.changelog <span class="token punctuation">}</span><span class="token punctuation">}</span>
+</span><span class="code-line line-number" line="5">    <span class="token key atrule">allowUpdates</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+</span><span class="code-line line-number" line="6">    <span class="token key atrule">token</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> secrets.GITHUB_TOKEN <span class="token punctuation">}</span><span class="token punctuation">}</span>
+</span><span class="code-line line-number" line="7">    <span class="token key atrule">name</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.create_tag.outputs.version <span class="token punctuation">}</span><span class="token punctuation">}</span>
+</span><span class="code-line line-number" line="8">    <span class="token key atrule">tag</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.create_tag.outputs.version <span class="token punctuation">}</span><span class="token punctuation">}</span>
+</span><span class="code-line line-number" line="9">    <span class="token key atrule">body</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+</span></span><span class="code-line line-number" line="10"><span class="token scalar string">      ```bash
+</span></span><span class="code-line line-number" line="11"><span class="token scalar string">      npm i @uiw/react-heat-map@${{steps.create_tag.outputs.versionNumber}}
+</span></span><span class="code-line line-number" line="12"><span class="token scalar string">      ```</span>
+</span><span class="code-line line-number" line="13">
+</span><span class="code-line line-number" line="14">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.compareurl <span class="token punctuation">}</span><span class="token punctuation">}</span>
+</span><span class="code-line line-number" line="15">      $<span class="token punctuation">{</span><span class="token punctuation">{</span> steps.changelog.outputs.changelog <span class="token punctuation">}</span><span class="token punctuation">}</span>
 </span></code><input type="hidden" value="- name: Create Release
   uses: ncipollo/release-action@v1
   if: steps.create_tag.outputs.successful == &#x27;true&#x27;
   with:
+    allowUpdates: true
     token: ${{ secrets.GITHUB_TOKEN }}
     name: ${{ steps.create_tag.outputs.version }}
     tag: ${{ steps.create_tag.outputs.version }}
