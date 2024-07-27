@@ -117,6 +117,7 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
   uses: ncipollo/release-action@v1
   if: steps.create_tag.outputs.successful == 'true'
   with:
+    allowUpdates: true
     token: ${{ secrets.GITHUB_TOKEN }}
     name: ${{ steps.create_tag.outputs.version }}
     tag: ${{ steps.create_tag.outputs.version }}
