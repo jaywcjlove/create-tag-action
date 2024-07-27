@@ -18,13 +18,14 @@ async function run(): Promise<void> {
     const prerelease = core.getBooleanInput('prerelease') || false
     /** Optionally marks this release as a draft release. Set to true to enable. */
     const draft = core.getBooleanInput('draft') || false
+    /** Compare the tag `version` number in the `commit content` with the last tag and automatically generate tags */
+    const commit: string = core.getInput('commit') || github.context.payload?.head_commit?.message || ''
     /** The path of the `package.json` file. Default `package.json`. */
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
     const inputVersion = core.getInput('version')
     const octokit = github.getOctokit(myToken)
     const {owner, repo} = github.context.repo
-    const commit: string = github.context.payload?.head_commit?.message || ''
     core.info(`commit: ${commit || '\x1b[31;1mNo commit found\x1b[0m'}`)
     const latestRelease = await octokit.rest.repos.getLatestRelease({
       owner,

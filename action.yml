@@ -17,6 +17,11 @@ inputs:
     default: ''
     required: false
 
+  commit:
+    description: 'Compare the tag `version` number in the `commit content` with the last tag and automatically generate tags'
+    default: ''
+    required: false
+
   package-path:
     description: 'The path of the package.json file.'
     default: 'package.json'
