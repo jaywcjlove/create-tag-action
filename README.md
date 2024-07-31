@@ -131,11 +131,12 @@ Use `steps.<job_id>.outputs.successful` to determine whether the version is crea
       ${{ steps.changelog.outputs.changelog }}
 ```
 
-OR use `jaywcjlove/create-tag-action@main`: 
+OR use `jaywcjlove/create-tag-action@main` create release: 
 
 ```yml
-- name: Generate Changelog
+- name: Create Release
   uses: jaywcjlove/create-tag-action@main
+  id: release
   if: steps.create_tag.outputs.successful == 'true'
   with:
     version: ${{steps.create_tag.outputs.version}}
@@ -147,6 +148,13 @@ OR use `jaywcjlove/create-tag-action@main`:
 
       ${{ steps.changelog.outputs.compareurl }}
       ${{ steps.changelog.outputs.changelog }}
+
+- name: Release Upload Assets
+  uses: jaywcjlove/github-action-upload-assets@main
+  continue-on-error: true
+  with:
+    tag: ${{ steps.release.outputs.version }}
+    asset-path: '["./target/release/sgo-*"]'
 ```
 
 ## See Also
