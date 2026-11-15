@@ -3,9 +3,17 @@ import * as github from '@actions/github'
 import FS from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import {getVersion} from './utils'
+import {getVersion, toVersionNumber} from './utils'
 
-async function run(): Promise<void> {
+const outputVersionNumber = (version: string): string => {
+  const versionNumber = toVersionNumber(version)
+  if (versionNumber) {
+    core.setOutput('versionNumber', versionNumber)
+  }
+  return versionNumber
+}
+
+export async function run(): Promise<void> {
   try {
     const myToken = core.getInput('token')
     /** The regular expression matches the submitted content. */
@@ -19,7 +27,10 @@ async function run(): Promise<void> {
     /** Optionally marks this release as a draft release. Set to true to enable. */
     const draft = core.getBooleanInput('draft') || false
     /** Compare the tag `version` number in the `commit content` with the last tag and automatically generate tags */
-    const commit: string = core.getInput('commit') || github.context.payload?.head_commit?.message || ''
+    const commit: string =
+      core.getInput('commit') ||
+      github.context.payload?.head_commit?.message ||
+      ''
     /** The path of the `package.json` file. Default `package.json`. */
     const packagePath = core.getInput('package-path')
     // Example: v1.0.0
@@ -52,7 +63,7 @@ async function run(): Promise<void> {
 
     if (preTag && semver.valid(preTag)) {
       const preversion = semver.coerce(preTag)?.version || ''
-      const preversionNumber = semver.coerce(preTag)?.raw || ''
+      const preversionNumber = outputVersionNumber(preTag)
       core.setOutput('version', preversion)
       core.setOutput('preversion', preversion)
       core.setOutput('preversionNumber', preversionNumber)
@@ -73,11 +84,20 @@ async function run(): Promise<void> {
     }
 
     if (inputVersion && semver.valid(inputVersion)) {
+      const inputVersionNumber = outputVersionNumber(inputVersion)
       core.setOutput('version', inputVersion)
-      core.setOutput('versionNumber', semver.coerce(inputVersion)?.raw)
-      core.setOutput('majorVersion', semver.major(inputVersion))
-      core.setOutput('minorVersion', semver.minor(inputVersion))
-      core.setOutput('patchVersion', semver.patch(inputVersion))
+      core.setOutput(
+        'majorVersion',
+        semver.major(inputVersionNumber || inputVersion)
+      )
+      core.setOutput(
+        'minorVersion',
+        semver.minor(inputVersionNumber || inputVersion)
+      )
+      core.setOutput(
+        'patchVersion',
+        semver.patch(inputVersionNumber || inputVersion)
+      )
       core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${prerelease}`)
       core.info(
         `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
@@ -131,7 +151,9 @@ async function run(): Promise<void> {
       version = getVersion(commit)
       if (!version) return
 
-      if (preTag && !semver.gt(version, preTag)) {
+      const nextNumber = toVersionNumber(version)
+      const prevNumber = toVersionNumber(preTag)
+      if (prevNumber && nextNumber && !semver.gt(nextNumber, prevNumber)) {
         core.info(
           `The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
@@ -167,7 +189,12 @@ async function run(): Promise<void> {
         return
       }
       version = `v${pkg.version}`
-      if (semver.valid(preTag) && !semver.gt(pkg.version, preTag)) {
+      const pkgVersionNumber = toVersionNumber(`${pkg.version}`)
+      if (
+        semver.valid(preTag) &&
+        pkgVersionNumber &&
+        !semver.gt(pkgVersionNumber, preTag)
+      ) {
         const listRelease = await octokit.rest.repos.listReleases({owner, repo})
         core.startGroup(`Get Release List:`)
         if (listRelease.data && listRelease.data.length > 0) {
@@ -227,6 +254,7 @@ async function run(): Promise<void> {
         }
         core.info(`version: ${owner} ${repo} ${version} - ${preTag}`)
         core.setOutput('version', version || preTag)
+        outputVersionNumber(version || preTag)
         return
       }
       core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`)
@@ -242,23 +270,22 @@ async function run(): Promise<void> {
     core.info(`${owner} ${repo} ${version} - ${preTag}`)
     core.setOutput('version', version || preTag)
     core.info(`output version: \x1b[33m${version || preTag}\x1b[0m`)
-    if (semver.valid(version || preTag)) {
-      core.setOutput('versionNumber', semver.coerce(version || preTag)?.raw)
-      core.info(
-        `output versionNumber: \x1b[33m${
-          semver.coerce(version || preTag)?.raw
-        }\x1b[0m`
-      )
-    }
+    const versionNumber = outputVersionNumber(version || preTag)
+    core.info(`output versionNumber: \x1b[33m${versionNumber}\x1b[0m`)
     core.setOutput('successful', true)
     core.info(`output successful: \x1b[33m${true}\x1b[0m`)
 
-    core.setOutput('majorVersion', semver.major(version))
-    core.info(`output majorVersion: \x1b[33m${semver.major(version)}\x1b[0m`)
-    core.setOutput('minorVersion', semver.minor(version))
-    core.info(`output minorVersion: \x1b[33m${semver.minor(version)}\x1b[0m`)
-    core.setOutput('patchVersion', semver.patch(version))
-    core.info(`output patchVersion: \x1b[33m${semver.patch(version)}\x1b[0m`)
+    if (versionNumber) {
+      const majorVersion = semver.major(versionNumber)
+      const minorVersion = semver.minor(versionNumber)
+      const patchVersion = semver.patch(versionNumber)
+      core.setOutput('majorVersion', majorVersion)
+      core.info(`output majorVersion: \x1b[33m${majorVersion}\x1b[0m`)
+      core.setOutput('minorVersion', minorVersion)
+      core.info(`output minorVersion: \x1b[33m${minorVersion}\x1b[0m`)
+      core.setOutput('patchVersion', patchVersion)
+      core.info(`output patchVersion: \x1b[33m${patchVersion}\x1b[0m`)
+    }
 
     if (release) {
       await octokit.rest.repos.createRelease({
@@ -339,12 +366,16 @@ async function createTag(
   }
 }
 
-try {
-  run()
-} catch (error) {
-  if (error instanceof Error) {
-    core.setFailed(`CREATE_TAG_ERROR:${error.message}`)
-  } else {
-    core.setFailed(`CREATE_TAG_ERR:${error}`)
+// ncc folds `require.main === module` to false and drops this call.
+// Jest sets JEST_WORKER_ID, so tests can import `run` without starting it.
+if (!process.env.JEST_WORKER_ID) {
+  try {
+    run()
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(`CREATE_TAG_ERROR:${error.message}`)
+    } else {
+      core.setFailed(`CREATE_TAG_ERR:${error}`)
+    }
   }
 }
