@@ -89,7 +89,10 @@ describe('outputs.versionNumber', () => {
     await run()
 
     expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.4.0-beta.2')
     expect(output('versionNumber')).toEqual('1.4.0-beta.2')
+    expect(output('preversion')).toEqual('v1.2.0')
+    expect(output('preversionNumber')).toEqual('1.2.0')
     expect(output('successful')).toEqual('true')
     expect(output('majorVersion')).toEqual('1')
     expect(output('minorVersion')).toEqual('4')
@@ -107,8 +110,13 @@ describe('outputs.versionNumber', () => {
     await run()
 
     expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.2.0')
     expect(output('versionNumber')).toEqual('1.2.0')
+    expect(output('preversion')).toEqual('v1.2.0')
     expect(output('preversionNumber')).toEqual('1.2.0')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('2')
+    expect(output('patchVersion')).toEqual('0')
     expect(output('successful')).toEqual('false')
     expect(createTag).not.toHaveBeenCalled()
   })
@@ -131,6 +139,11 @@ describe('outputs.versionNumber', () => {
     expect(setFailed).not.toHaveBeenCalled()
     expect(output('version')).toEqual('v1.0.0')
     expect(output('versionNumber')).toEqual('1.0.0')
+    expect(output('preversion')).toEqual('v2.0.0')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('0')
+    expect(output('patchVersion')).toEqual('0')
+    expect(output('successful')).toEqual('false')
     expect(createTag).not.toHaveBeenCalled()
   })
 
@@ -145,10 +158,14 @@ describe('outputs.versionNumber', () => {
     await run()
 
     expect(setFailed).not.toHaveBeenCalled()
-    expect(output('version')).toEqual('V2.0.0')
+    expect(output('version')).toEqual('v2.0.0')
     expect(output('versionNumber')).toEqual('2.0.0')
+    expect(output('preversion')).toEqual('v1.2.0')
+    expect(output('majorVersion')).toEqual('2')
     expect(output('successful')).toEqual('true')
-    expect(createTag).toHaveBeenCalled()
+    expect(createTag).toHaveBeenCalledWith(
+      expect.objectContaining({tag: 'v2.0.0'})
+    )
   })
 
   test('partial commit version is coerced instead of leaving versionNumber empty', async () => {
@@ -162,7 +179,11 @@ describe('outputs.versionNumber', () => {
     await run()
 
     expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.3.0')
     expect(output('versionNumber')).toEqual('1.3.0')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('3')
+    expect(output('patchVersion')).toEqual('0')
     expect(output('successful')).toEqual('true')
   })
 
@@ -177,7 +198,9 @@ describe('outputs.versionNumber', () => {
     await run()
 
     expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.2.0')
     expect(output('versionNumber')).toEqual('1.2.0')
+    expect(output('preversion')).toEqual('v1.2.0')
     expect(output('successful')).toEqual('false')
     expect(createTag).not.toHaveBeenCalled()
   })
@@ -193,7 +216,165 @@ describe('outputs.versionNumber', () => {
 
     await run()
 
+    expect(output('version')).toEqual('v1.2.3-beta.1')
     expect(output('versionNumber')).toEqual('1.2.3-beta.1')
+    expect(output('preversion')).toEqual('v1.2.3-beta.1')
     expect(output('preversionNumber')).toEqual('1.2.3-beta.1')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('2')
+    expect(output('patchVersion')).toEqual('3')
+  })
+
+  test('a capital V on the previous tag still fills every version output', async () => {
+    mockRelease('V1.2.3-beta.1')
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'test') return '[R|r]elease[d]\\s+[v|V]\\d(\\.\\d+){0,2}'
+      if (name === 'commit') return 'docs: update readme'
+      return ''
+    })
+
+    await run()
+
+    expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.2.3-beta.1')
+    expect(output('preversion')).toEqual('v1.2.3-beta.1')
+    expect(output('preversionNumber')).toEqual('1.2.3-beta.1')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('2')
+    expect(output('patchVersion')).toEqual('3')
+  })
+
+  test('an invalid previous tag does not throw when a new version is created', async () => {
+    mockRelease('nightly')
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'v1.4.0'
+      return ''
+    })
+
+    await run()
+
+    expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.4.0')
+    expect(output('versionNumber')).toEqual('1.4.0')
+    expect(output('preversion')).toBeUndefined()
+    expect(output('preversionNumber')).toBeUndefined()
+    expect(output('successful')).toEqual('true')
+    expect(createTag).toHaveBeenCalledWith(
+      expect.objectContaining({tag: 'v1.4.0'})
+    )
+  })
+
+  test('a smaller explicit version keeps its own major minor and patch', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'v1.0.0'
+      return ''
+    })
+
+    await run()
+
+    expect(output('version')).toEqual('v1.0.0')
+    expect(output('versionNumber')).toEqual('1.0.0')
+    expect(output('preversion')).toEqual('v1.2.0')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('minorVersion')).toEqual('0')
+    expect(output('patchVersion')).toEqual('0')
+    expect(output('successful')).toEqual('false')
+    expect(createTag).not.toHaveBeenCalled()
+  })
+
+  test('capital V input is normalized and still creates a tag', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'V1.4.0'
+      return ''
+    })
+
+    await run()
+
+    expect(setFailed).not.toHaveBeenCalled()
+    expect(output('version')).toEqual('v1.4.0')
+    expect(output('versionNumber')).toEqual('1.4.0')
+    expect(output('successful')).toEqual('true')
+    expect(createTag).toHaveBeenCalledWith(
+      expect.objectContaining({tag: 'v1.4.0'})
+    )
+  })
+
+  test('successful stays false when tag creation fails', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'v1.4.0'
+      return ''
+    })
+    createTag.mockRejectedValue(new Error('api down'))
+
+    await run()
+
+    expect(output('version')).toEqual('v1.4.0')
+    expect(output('successful')).toEqual('false')
+    expect(setFailed).not.toHaveBeenCalled()
+  })
+
+  test('successful is true only after a release is created', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'v1.4.0'
+      return ''
+    })
+    getBooleanInput.mockImplementation(name => name === 'release')
+
+    await run()
+
+    expect(createRelease).toHaveBeenCalledWith(
+      expect.objectContaining({tag_name: 'v1.4.0'})
+    )
+    expect(createTag).not.toHaveBeenCalled()
+    expect(output('successful')).toEqual('true')
+  })
+
+  test('a failed release leaves successful false', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'version') return 'v1.4.0'
+      return ''
+    })
+    getBooleanInput.mockImplementation(name => name === 'release')
+    createRelease.mockRejectedValue(new Error('denied'))
+
+    await run()
+
+    expect(output('successful')).toEqual('false')
+    expect(setFailed).toHaveBeenCalled()
+  })
+
+  test('creating a tag for an older package version reports successful', async () => {
+    getInput.mockImplementation(name => {
+      if (name === 'token') return 'test-token'
+      if (name === 'package-path') return 'package.json'
+      return ''
+    })
+    ;(FS.existsSync as jest.Mock).mockReturnValue(true)
+    ;(FS.readJson as jest.Mock).mockResolvedValue({
+      name: 'demo',
+      version: '1.0.0'
+    })
+    mockRelease('v2.0.0')
+    listReleases.mockResolvedValue({
+      status: 200,
+      data: [{tag_name: 'v2.0.0', name: 'v2.0.0'}]
+    })
+
+    await run()
+
+    expect(setFailed).not.toHaveBeenCalled()
+    expect(createTag).toHaveBeenCalledWith(
+      expect.objectContaining({tag: 'v1.0.0'})
+    )
+    expect(output('version')).toEqual('v1.0.0')
+    expect(output('majorVersion')).toEqual('1')
+    expect(output('successful')).toEqual('true')
   })
 })

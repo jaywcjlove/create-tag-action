@@ -3,14 +3,36 @@ import * as github from '@actions/github'
 import FS from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import {getVersion, toVersionNumber} from './utils'
+import {getVersion, toVersionNumber, toVersionTag} from './utils'
 
-const outputVersionNumber = (version: string): string => {
+/** `version`, `versionNumber`, and major/minor/patch for one version string. */
+const outputReleaseVersion = (version: string): string => {
   const versionNumber = toVersionNumber(version)
-  if (versionNumber) {
-    core.setOutput('versionNumber', versionNumber)
-  }
-  return versionNumber
+  const versionTag = toVersionTag(version)
+  if (!versionNumber || !versionTag) return ''
+  core.setOutput('version', versionTag)
+  core.setOutput('versionNumber', versionNumber)
+  core.setOutput('majorVersion', semver.major(versionNumber))
+  core.setOutput('minorVersion', semver.minor(versionNumber))
+  core.setOutput('patchVersion', semver.patch(versionNumber))
+  return versionTag
+}
+
+const outputPreviousVersion = (version: string): void => {
+  const versionNumber = toVersionNumber(version)
+  const versionTag = toVersionTag(version)
+  if (!versionNumber || !versionTag) return
+  core.setOutput('preversion', versionTag)
+  core.setOutput('preversionNumber', versionNumber)
+  outputReleaseVersion(version)
+}
+
+/** A previous tag that cannot be parsed does not block a new tag. */
+const isNewer = (next: string, previous: string): boolean => {
+  const nextNumber = toVersionNumber(next)
+  const previousNumber = toVersionNumber(previous)
+  if (!nextNumber || !previousNumber) return true
+  return semver.gt(nextNumber, previousNumber)
 }
 
 export async function run(): Promise<void> {
@@ -61,50 +83,28 @@ export async function run(): Promise<void> {
     // Example: v1.2.1
     const preTag = latestRelease.data.tag_name || ''
 
-    if (preTag && semver.valid(preTag)) {
-      const preversion = semver.coerce(preTag)?.version || ''
-      const preversionNumber = outputVersionNumber(preTag)
-      core.setOutput('version', preversion)
-      core.setOutput('preversion', preversion)
-      core.setOutput('preversionNumber', preversionNumber)
-      core.setOutput('majorVersion', semver.major(preTag))
-      core.setOutput('minorVersion', semver.minor(preTag))
-      core.setOutput('patchVersion', semver.patch(preTag))
-    }
-
-    if (preTag && !semver.valid(preTag)) {
+    if (preTag && toVersionNumber(preTag)) {
+      outputPreviousVersion(preTag)
+    } else if (preTag) {
       core.warning(`Invalid version number \x1b[31;1m"${preTag}"\x1b[0m.`)
     }
 
-    if (inputVersion && !semver.valid(inputVersion)) {
+    if (inputVersion && !toVersionNumber(inputVersion)) {
       core.setFailed(
         `Invalid version number \x1b[31;1m"${inputVersion}"\x1b[0m.`
       )
       return
     }
 
-    if (inputVersion && semver.valid(inputVersion)) {
-      const inputVersionNumber = outputVersionNumber(inputVersion)
-      core.setOutput('version', inputVersion)
-      core.setOutput(
-        'majorVersion',
-        semver.major(inputVersionNumber || inputVersion)
-      )
-      core.setOutput(
-        'minorVersion',
-        semver.minor(inputVersionNumber || inputVersion)
-      )
-      core.setOutput(
-        'patchVersion',
-        semver.patch(inputVersionNumber || inputVersion)
-      )
-      core.info(`${owner} ${repo} ${inputVersion} - ${preTag} -${prerelease}`)
+    if (inputVersion && toVersionNumber(inputVersion)) {
+      const inputTag = outputReleaseVersion(inputVersion)
+      core.info(`${owner} ${repo} ${inputTag} - ${preTag} -${prerelease}`)
       core.info(
-        `Tagged \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
+        `Tagged \x1b[32m${inputTag}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m `
       )
-      if (inputVersion && semver.gte(preTag, inputVersion)) {
+      if (!isNewer(inputVersion, preTag)) {
         core.info(
-          `The new tag \x1b[33m${inputVersion}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
+          `The new tag \x1b[33m${inputTag}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
         core.setOutput('successful', false)
         return
@@ -115,19 +115,19 @@ export async function run(): Promise<void> {
           repo,
           prerelease,
           draft,
-          tag_name: inputVersion,
+          tag_name: inputTag,
           body: body || ''
         })
-        core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+        core.info(`Created Released \x1b[32m${inputTag || ' - '}\x1b[0m`)
         core.setOutput('successful', true)
       } else {
-        const tagSha = await createTag(myToken, inputVersion)
+        const tagSha = await createTag(myToken, inputTag)
         core.info(
           `Tagged \x1b[32m${
             tagSha || ' - '
-          }\x1b[0m as \x1b[32m${inputVersion}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+          }\x1b[0m as \x1b[32m${inputTag}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
         )
-        core.setOutput('successful', true)
+        core.setOutput('successful', Boolean(tagSha))
       }
       return
     }
@@ -151,9 +151,7 @@ export async function run(): Promise<void> {
       version = getVersion(commit)
       if (!version) return
 
-      const nextNumber = toVersionNumber(version)
-      const prevNumber = toVersionNumber(preTag)
-      if (prevNumber && nextNumber && !semver.gt(nextNumber, prevNumber)) {
+      if (!isNewer(version, preTag)) {
         core.info(
           `The new tag \x1b[33m${version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
@@ -190,11 +188,7 @@ export async function run(): Promise<void> {
       }
       version = `v${pkg.version}`
       const pkgVersionNumber = toVersionNumber(`${pkg.version}`)
-      if (
-        semver.valid(preTag) &&
-        pkgVersionNumber &&
-        !semver.gt(pkgVersionNumber, preTag)
-      ) {
+      if (!isNewer(`${pkg.version}`, preTag)) {
         const listRelease = await octokit.rest.repos.listReleases({owner, repo})
         core.startGroup(`Get Release List:`)
         if (listRelease.data && listRelease.data.length > 0) {
@@ -206,45 +200,55 @@ export async function run(): Promise<void> {
         core.info(
           `The new tag \x1b[33m${pkg.version}\x1b[0m is smaller than \x1b[32m${preTag}\x1b[0m.\x1b[33m Do not create tag.\x1b[0m`
         )
+        let created = false
         if (listRelease.data && listRelease.data.length > 0) {
           const {tag_name} = listRelease.data[0]
+          const listedNumber = toVersionNumber(tag_name || '')
+          const sameRelease = Boolean(
+            listedNumber &&
+            pkgVersionNumber &&
+            listedNumber === pkgVersionNumber
+          )
           core.info(
             `The new Released \x1b[33m${pkg.version}\x1b[0m >= \x1b[32m${tag_name}\x1b[0m.`
           )
           core.info(`CreateRelease: - ${preTag} - ${!!prerelease}`)
           core.info(
-            `v1 > v2: ${semver.gt(`v${pkg.version}`, tag_name || '')}, v${
-              pkg.version
-            } -> ${tag_name || ''}, ${release}`
+            `v1 > v2: ${
+              listedNumber ? semver.gt(pkgVersionNumber, listedNumber) : false
+            }, v${pkg.version} -> ${tag_name || ''}, ${release}`
           )
           core.info(
-            `v1 <eq> v2: ${semver.eq(`v${pkg.version}`, tag_name || '')}, v${
-              pkg.version
-            } -> ${tag_name || ''}, ${release}`
+            `v1 <eq> v2: ${sameRelease}, v${pkg.version} -> ${
+              tag_name || ''
+            }, ${release}`
           )
-          if (tag_name && !semver.eq(`v${pkg.version}`, tag_name)) {
+          if (tag_name && !sameRelease) {
+            const packageTag = toVersionTag(`${pkg.version}`)
             if (release) {
               await octokit.rest.repos.createRelease({
                 owner,
                 repo,
                 prerelease: !!prerelease,
-                tag_name: `v${pkg.version}`,
+                tag_name: packageTag,
                 body: body || ''
               })
-              core.info(`Created Released: - v${pkg.version}`)
+              created = true
+              core.info(`Created Released: - ${packageTag}`)
               core.info(`Created Released \x1b[32m${tag_name || ' - '}\x1b[0m`)
               core.info(
                 `Created Released Body: \x1b[32m${body || ' - '}\x1b[0m`
               )
             } else {
-              const tagSha = await createTag(myToken, version)
+              const tagSha = await createTag(myToken, packageTag)
+              created = Boolean(tagSha)
               core.info(
                 `Tagged \x1b[32m${
                   tagSha || ' - '
-                }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+                }\x1b[0m as \x1b[32m${packageTag}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
               )
               core.info(
-                `Created Tag: - pkg.version: v${pkg.version}, version: ${version}`
+                `Created Tag: - pkg.version: v${pkg.version}, version: ${packageTag}`
               )
               core.info(`Created Tag \x1b[32m${tag_name || ' - '}\x1b[0m`)
               core.info(`Created Tag Body: \x1b[32m${body || ' - '}\x1b[0m`)
@@ -253,8 +257,8 @@ export async function run(): Promise<void> {
           }
         }
         core.info(`version: ${owner} ${repo} ${version} - ${preTag}`)
-        core.setOutput('version', version || preTag)
-        outputVersionNumber(version || preTag)
+        outputReleaseVersion(version || preTag)
+        core.setOutput('successful', created)
         return
       }
       core.info(`Resolve Package Path \x1b[33m${resolvePackagePath}\x1b[0m`)
@@ -267,46 +271,43 @@ export async function run(): Promise<void> {
     } else {
       core.info(`Create tag \x1b[32m${version}\x1b[0m`)
     }
-    core.info(`${owner} ${repo} ${version} - ${preTag}`)
-    core.setOutput('version', version || preTag)
-    core.info(`output version: \x1b[33m${version || preTag}\x1b[0m`)
-    const versionNumber = outputVersionNumber(version || preTag)
-    core.info(`output versionNumber: \x1b[33m${versionNumber}\x1b[0m`)
-    core.setOutput('successful', true)
-    core.info(`output successful: \x1b[33m${true}\x1b[0m`)
-
-    if (versionNumber) {
-      const majorVersion = semver.major(versionNumber)
-      const minorVersion = semver.minor(versionNumber)
-      const patchVersion = semver.patch(versionNumber)
-      core.setOutput('majorVersion', majorVersion)
-      core.info(`output majorVersion: \x1b[33m${majorVersion}\x1b[0m`)
-      core.setOutput('minorVersion', minorVersion)
-      core.info(`output minorVersion: \x1b[33m${minorVersion}\x1b[0m`)
-      core.setOutput('patchVersion', patchVersion)
-      core.info(`output patchVersion: \x1b[33m${patchVersion}\x1b[0m`)
-    }
+    const versionTag = outputReleaseVersion(version || preTag)
+    if (!versionTag) return
+    core.info(`${owner} ${repo} ${versionTag} - ${preTag}`)
+    core.info(`output version: \x1b[33m${versionTag}\x1b[0m`)
+    core.info(
+      `output versionNumber: \x1b[33m${toVersionNumber(versionTag)}\x1b[0m`
+    )
+    const majorVersion = semver.major(toVersionNumber(versionTag))
+    const minorVersion = semver.minor(toVersionNumber(versionTag))
+    const patchVersion = semver.patch(toVersionNumber(versionTag))
+    core.info(`output majorVersion: \x1b[33m${majorVersion}\x1b[0m`)
+    core.info(`output minorVersion: \x1b[33m${minorVersion}\x1b[0m`)
+    core.info(`output patchVersion: \x1b[33m${patchVersion}\x1b[0m`)
 
     if (release) {
       await octokit.rest.repos.createRelease({
         owner,
         repo,
         prerelease: !!prerelease,
-        tag_name: version || preTag,
+        tag_name: versionTag,
         body: body || ''
       })
-      core.info(`Created Released \x1b[32m${inputVersion || ' - '}\x1b[0m`)
+      core.setOutput('successful', true)
+      core.info(`output successful: \x1b[33m${true}\x1b[0m`)
+      core.info(`Created Released \x1b[32m${versionTag || ' - '}\x1b[0m`)
       core.info(
-        `Tagged \x1b[32m${
-          version || '-'
-        }\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+        `Tagged \x1b[32m${versionTag}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
       )
     } else {
-      const tagSha = await createTag(myToken, version)
+      const tagSha = await createTag(myToken, versionTag)
+      const created = Boolean(tagSha)
+      core.setOutput('successful', created)
+      core.info(`output successful: \x1b[33m${created}\x1b[0m`)
       core.info(
         `Tagged \x1b[32m${
           tagSha || ' - '
-        }\x1b[0m as \x1b[32m${version}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
+        }\x1b[0m as \x1b[32m${versionTag}\x1b[0m!, Pre Tag: \x1b[33m${preTag}\x1b[0m`
       )
     }
   } catch (error) {

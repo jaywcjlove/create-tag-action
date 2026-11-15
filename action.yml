@@ -61,7 +61,7 @@ outputs:
   preversion:
     description: 'The previous tag version number.'
   preversionNumber:
-    description: 'The previous tag version number of the tag created. example: v1.0.0'
+    description: 'The previous tag version number of the tag created. example: 1.0.0'
   successful:
     description: 'The tag was successfully created.'
 runs:
